@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Snape's Spelling</title>
+<style>
+  body {
+    background-color: #1a1a1a; color: #d4af37; font-family: sans-serif;
+    margin: 0; padding: 0; overflow: hidden; touch-action: none;
+  }
+  #gate-screen, #game-screen {
+    display: flex; flex-direction: column; align-items: center; 
+    justify-content: center; height: 100vh; width: 100vw;
+  }
+  #game-screen { display: none; background: #0a0a0a; position: relative; }
+  h1 { font-size: 2rem; margin-bottom: 10px; text-shadow: 2px 2px 4px #000; text-align: center; }
+  button {
+    background: #d4af37; color: #1a1a1a; border: 2px solid #a67c00;
+    padding: 15px 30px; font-size: 1.2rem; border-radius: 10px; font-weight: bold;
+  }
+  #status { margin-top: 20px; font-style: italic; color: #888; }
+  
+  /* Game UI */
+  #target-word-display { font-size: 2.5rem; letter-spacing: 10px; margin-bottom: 20px; min-height: 50px; }
+  #play-audio-btn { padding: 10px 20px; margin-bottom: 20px; background: #444; color: white; border: none; border-radius: 5px; }
+  #game-area { flex-grow: 1; width: 100%; position: relative; overflow: hidden; border-top: 2px solid #333; }
+  
+  .falling-letter {
+    position: absolute; top: -50px; width: 50px; height: 50px;
+    background: #2a2a2a; color: #d4af37; font-size: 1.5rem; font-weight: bold;
+    display: flex; justify-content: center; align-items: center;
+    border: 2px solid #d4af37; border-radius: 5px; box-shadow: 0 0 10px rgba(212, 175, 55, 0.2);
+  }
+</style>
+</head>
+<body>
+
+<div id="gate-screen">
+  <h1>The Marauder's Gate</h1>
+  <p>State the password to enter.</p>
+  <button id="wand-btn">🪄 Tap to Speak</button>
+  <div id="status">Waiting...</div>
+</div>
+
+<div id="game-screen">
+  <div id="target-word-display"></div>
+  <button id="play-audio-btn">🔊 Hear Word</button>
+  <div id="game-area"></div>
+</div>
+
+<script>
+  // Word Dictionary
+  const words = [
+    { word: "fun", level: 1 },
+    { word: "beautiful", level: 2 },
+    { word: "children", level: 2 },
+    { word: "accident", level: 3 },
+    { word: "knowledge", level: 3 }
+  ];
+
+  let currentWord = "";
+  let currentLetterIndex = 0;
+  let gameInterval;
+  let activeLetters = [];
+
+  // DOM Elements
+  const gateScreen = document.getElementById('gate-screen');
+  const gameScreen = document.getElementById('game-screen');
+  const wandBtn = document.getElementById('wand-btn');
+  const statusText = document.getElementById('status');
+  const targetDisplay = document.getElementById('target-word-display');
+  const gameArea = document.getElementById('game-area');
+  const playAudioBtn = document.getElementById('play-audio-btn');
+
+  // Speech Synthesis setup
+  const synth = window.speechSynthesis;
+  
+  function unlockAudio() {
+    // iOS requires a user gesture to unlock the speech engine
+    const utterance = new SpeechSynthesisUtterance('');
+    synth.speak(utterance);
+  }
+
+  function speakWord(word) {
+    const utterance = new SpeechSynthesisUtterance(word);
+    utterance.lang = 'en-GB';
+    utterance.rate = 0.8;
+    synth.speak(utterance);
+  }
+
+  // Phase 1: Voice Recognition
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (SpeechRecognition) {
+    const recognition = new SpeechRecognition();
+    recognition.lang = 'en-GB';
+
+    wandBtn.addEventListener('click', () => {
+      unlockAudio(); // Unlock audio on this interaction
+      recognition.start();
+      statusText.innerHTML = "Listening...";
+    });
+
+    recognition.onresult = (event) => {
+      const speech = event.results[0][0].transcript.toLowerCase();
+      if (speech.includes("no good") || speech.includes("swear")) {
+        statusText.innerHTML = "Mischief Managed.";
+        setTimeout(startGame, 1000);
+      } else {
+        statusText.innerHTML = "Incorrect. Try again.";
+      }
+    };
+  } else {
+    // Fallback for non-supported browsers during desktop testing
+    wandBtn.addEventListener('click', () => { unlockAudio(); startGame(); });
+    wandBtn.innerHTML = "Skip (Voice not supported)";
+  }
+
+  // Phase 2: Game Logic
+  function startGame() {
+    gateScreen.style.display = 'none';
+    gameScreen.style.display = 'flex';
+    loadNextWord();
+  }
+
+  function loadNextWord() {
+    gameArea.innerHTML = '';
+    activeLetters = [];
+    currentLetterIndex = 0;
+    
+    // Pick random word
+    currentWord = words[Math.floor(Math.random() * words.length)].word.toUpperCase();
+    updateDisplay();
+    
+    setTimeout(() => speakWord(currentWord), 500);
+    
+    clearInterval(gameInterval);
+    gameInterval = setInterval(spawnLetter, 1200);
+    requestAnimationFrame(gameLoop);
+  }
+
+  function updateDisplay() {
+    let displayHtml = '';
+    for (let i = 0; i < currentWord.length; i++) {
+      displayHtml += i < currentLetterIndex ? currentWord[i] : '_';
+    }
+    targetDisplay.innerHTML = displayHtml;
+  }
+
+  playAudioBtn.addEventListener('click', () => speakWord(currentWord));
+
+  function spawnLetter() {
+    const el = document.createElement('div');
+    el.className = 'falling-letter';
+    
+    // 60% chance for correct next letter, 40% random
+    const nextCorrectLetter = currentWord[currentLetterIndex];
+    const isCorrect = Math.random() > 0.4;
+    const randomChar = String.fromCharCode(65 + Math.floor(Math.random() * 26));
+    
+    el.innerText = isCorrect ? nextCorrectLetter : randomChar;
+    el.style.left = Math.random() * (window.innerWidth - 60) + 'px';
+    
+    let y = -50;
+    el.style.top = y + 'px';
+    gameArea.appendChild(el);
+    
+    const letterObj = { el, y, char: el.innerText };
+    activeLetters.push(letterObj);
+
+    // Touch event for the iPad
+    el.addEventListener('touchstart', (e) => handleLetterTap(e, letterObj));
+    el.addEventListener('mousedown', (e) => handleLetterTap(e, letterObj)); // For PC testing
+  }
+
+  function handleLetterTap(e, letterObj) {
+    e.preventDefault();
+    if (letterObj.char === currentWord[currentLetterIndex]) {
+      // Correct letter shot
+      letterObj.el.style.background = 'green';
+      setTimeout(() => letterObj.el.remove(), 100);
+      activeLetters = activeLetters.filter(l => l !== letterObj);
+      
+      currentLetterIndex++;
+      updateDisplay();
+      
+      if (currentLetterIndex >= currentWord.length) {
+        clearInterval(gameInterval);
+        setTimeout(loadNextWord, 1500); // Word complete, load next
+      }
+    } else {
+      // Wrong letter
+      letterObj.el.style.background = 'red';
+    }
+  }
+
+  function gameLoop() {
+    activeLetters.forEach(obj => {
+      obj.y += 2; // Falling speed
+      obj.el.style.top = obj.y + 'px';
+      
+      if (obj.y > window.innerHeight) {
+        obj.el.remove();
+        activeLetters = activeLetters.filter(l => l !== obj);
+      }
+    });
+    if (currentLetterIndex < currentWord.length) {
+      requestAnimationFrame(gameLoop);
+    }
+  }
+</script>
+</body>
+</html>
