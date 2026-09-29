@@ -89,7 +89,7 @@
 </style>
 </head>
 <body id="main-body">
-<div class="version-tag">v1.9</div>
+<div class="version-tag">v1.9.1</div>
 
 <div id="modal-overlay">
   <div class="modal-box">
@@ -106,7 +106,7 @@
   <div id="gate-title"><h1>The Marauder's Gate</h1></div>
   <p>State the password to enter.</p>
   <button id="wand-btn" style="margin-top: 20px;">🪄 Tap to Speak</button>
-  <button id="skip-btn" style="margin-top: 15px; background: transparent; border: none; box-shadow: none; color: #777; font-size: 0.9rem;">Skip (No Mic)</button>
+  <button id="skip-btn" style="display: none; margin-top: 15px; background: transparent; border: none; box-shadow: none; color: #777; font-size: 0.9rem;">Skip (No Mic)</button>
   <div id="status" style="margin-top: 15px; color: #888;">Waiting...</div>
   <div id="error-log"></div>
 </div>
@@ -180,17 +180,14 @@
 </div>
 
 <script>
-  // Global error catcher to display crashes on screen
   window.onerror = function(msg, url, lineNo, columnNo, error) {
     document.getElementById('error-log').innerText = 'System Error: ' + msg;
     return false;
   };
 
-  // Safe pre-loaded arrays (No copy/paste needed)
   const listHFW_Y1_Y2 = ["across","after","again","air","along","animals","today","said","says","were","where","love","come","some","once","friend","school","house","door","floor","poor","because","find","kind","mind","behind","child","children","wild","climb","old","cold","gold","hold","told","every","great","break","steak","pretty","beautiful","fast","last","past","father","class","grass","pass","plant","path","bath","hour","move","prove","improve","sure","sugar","could","should","would","whole","any","many","clothes","busy","people","water","money","parents"];
   const listY3_Y4 = ["accident","actual","address","answer","appear","arrive","believe","bicycle","breath","breathe","build","busy","business","calendar","caught","centre","century","certain","circle","complete","consider","continue","decide","describe","different","difficult","disappear","early","earth","eight","eighth","enough","exercise","experience","experiment","extreme","famous","favourite","forward","fruit","grammar","group","guard","guide","heard","heart","height","history","imagine","increase","important","interest","island","knowledge","learn","length","library","material","medicine","mention","minute","natural","naughty"];
 
-  // Bulletproof Save Data Loading
   let progress = { newts: 0, struggles: {}, helpLog: [] };
   try {
     const savedData = localStorage.getItem('edwardSpellingProgress');
@@ -249,7 +246,6 @@
     updateDungeonUI(); 
   }
 
-  // Gate Logic (Including fallbacks)
   let gateTapCount = 0, gateTapTimer;
   document.getElementById('gate-title').addEventListener('click', () => {
     gateTapCount++; clearTimeout(gateTapTimer);
