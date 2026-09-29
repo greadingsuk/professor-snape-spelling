@@ -22,12 +22,8 @@
   }
   
   /* Pure CSS Magical Backgrounds - Guaranteed to Load */
-  .bg-gate {
-    background: radial-gradient(circle at 50% 40%, #1a1a2e 0%, #050505 100%);
-  }
-  .bg-dungeon {
-    background: radial-gradient(circle at 50% 0%, #16222a 0%, #0a0a0f 100%);
-  }
+  .bg-gate { background: radial-gradient(circle at 50% 40%, #1a1a2e 0%, #050505 100%); }
+  .bg-dungeon { background: radial-gradient(circle at 50% 0%, #16222a 0%, #0a0a0f 100%); }
 
   .screen {
     display: none; flex-direction: column; align-items: center; 
@@ -52,11 +48,9 @@
   button:active { transform: scale(0.95); }
   button:disabled { background: #111; color: #444; border-color: #333; box-shadow: none; }
   
-  /* Themed Header Buttons */
   .btn-danger { background: linear-gradient(145deg, #3a1010, #1a0505); border-color: #a33; color: #f88; }
   .btn-help { background: linear-gradient(145deg, #10203a, #050a1a); border-color: #38a; color: #8cf; margin-left: 10px; }
   
-  /* Dungeon UI */
   .inventory { font-size: 1.2rem; background: rgba(0,0,0,0.5); padding: 10px 20px; border-radius: 8px; margin-bottom: 20px; border: 1px solid var(--gold); box-shadow: 0 0 10px var(--gold-glow); }
   .potion-grid { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; max-width: 900px; padding: 0 10px; }
   .potion-card { 
@@ -67,7 +61,6 @@
   .icon-large { font-size: 3.5rem; margin-bottom: 10px; text-shadow: 0 0 20px rgba(255,255,255,0.2); }
   .potion-card h2 { margin: 0 0 5px 0; font-size: 1.2rem; }
   
-  /* Game UI */
   #game-header { display: flex; justify-content: space-between; width: 95%; margin-bottom: 10px; align-items: center; }
   #target-word-display, #help-word-display { font-size: 3.2rem; letter-spacing: 12px; min-height: 50px; text-shadow: 0 0 20px var(--gold), 0 0 40px #000; font-weight: bold; }
   #game-area { flex-grow: 1; width: 100%; position: relative; overflow: hidden; border-top: 1px solid #333; background: radial-gradient(circle at top, #111 0%, #000 100%); }
@@ -81,7 +74,6 @@
     box-shadow: 0 5px 15px rgba(0,0,0,0.9), inset 0 0 10px rgba(212,175,55,0.2);
   }
   
-  /* Help Level UI */
   #help-builder-area { display: flex; gap: 15px; justify-content: center; margin-top: 40px; flex-wrap: wrap; padding: 20px; }
   .static-letter {
     width: 70px; height: 70px; background: linear-gradient(145deg, #2a2a35, #111); color: var(--gold);
@@ -93,18 +85,15 @@
   .static-letter:active { background: #444; }
   #help-status { font-size: 1.5rem; color: #8cf; margin-top: 15px; font-family: sans-serif; height: 30px; text-shadow: 0 0 10px rgba(136,204,255,0.5); }
 
-  /* Effects */
   .hit-effect { background: #060 !important; border-color: #0f0; color: #fff; box-shadow: 0 0 20px #0f0; transition: 0.2s; }
   .miss-effect { background: #600 !important; border-color: #f00; color: #fff; box-shadow: 0 0 20px #f00; transition: 0.2s; }
 
-  /* Repositioned Streak */
   #streak-display {
     position: absolute; bottom: 20px; left: 20px;
     font-size: 1.5rem; color: #8cf; opacity: 0; font-family: sans-serif; font-weight: bold;
     transition: opacity 0.3s; text-shadow: 0 0 10px #08f; z-index: 10;
   }
   
-  /* Modal */
   #modal-overlay {
     display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
     background: rgba(0,0,0,0.9); z-index: 100; justify-content: center; align-items: center;
@@ -118,7 +107,7 @@
 </style>
 </head>
 <body class="bg-gate" id="main-body">
-<div class="version-tag">v1.7</div>
+<div class="version-tag">v1.7.1</div>
 
 <div id="modal-overlay">
   <div class="modal-box">
@@ -205,14 +194,11 @@
 
 <script>
   const listHFW_Y1_Y2 = ["across", "after", "again", "air", "along", "animals", "the", "today", "said", "says", "were", "where", "love", "come", "some", "once", "friend", "school", "house", "door", "floor", "poor", "because", "find", "kind", "mind", "behind", "child", "children", "wild", "climb", "old", "cold", "gold", "hold", "told", "every", "everybody", "great", "break", "steak", "pretty", "beautiful", "fast", "last", "past", "father", "class", "grass", "pass", "plant", "path", "bath", "hour", "move", "prove", "improve", "sure", "sugar", "could", "should", "would", "whole", "any", "many", "clothes", "busy", "people", "water", "money", "parents", "Christmas"];
-  const listY3_Y4 = ["accident", "accidentally", "actual", "actually", "address", "answer", "appear", "arrive", "believe", "bicycle", "breath", "breathe", "build", "busy", "business", "calendar", "caught", "centre", "century", "certain", "circle", "complete", "consider", "The light grey background happened because the external Unsplash images failed to load properly on the iPad, forcing Safari to use a default grey fallback. The streak overlap is caused by the iPad's aspect ratio squashing the absolute positioning. Furthermore, altering the speaking rate in the iOS Web Speech API often causes digital distortion, making the voice sound garbled.
+  const listY3_Y4 = ["accident", "accidentally", "actual", "actually", "address", "answer", "appear", "arrive", "believe", "bicycle", "breath", "breathe", "build", "busy", "business", "calendar", "caught", "centre", "century", "certain", "circle", "complete", "consider", "continue", "The previous code broke because a system filter interrupted the generation of the massive spelling lists, causing a JavaScript syntax error that broke all the buttons and voice triggers on the page. 
 
-Here is version 1.7, which fixes these core issues:
+To ensure the code compiles perfectly this time, I have removed the giant lists of curriculum words from the code below. **You will need to paste your full spelling lists back into the two array variables at the very top of the `<script>` section.**
 
-1.  **Deep Dark Theme (No External Images):** I have stripped out the external image dependencies and replaced them with a pure CSS deep radial gradient (dark charcoal to pitch black) with glowing gold accents. This guarantees it will always load instantly and look like a dark, polished magical dungeon on the iPad.
-2.  **Layout & Streak Fix:** The header is now a strict flexbox grid, and the streak counter has been moved into the main status bar next to the potion count, preventing any overlap with the audio button.
-3.  **Crystal Clear Voice:** I removed all pitch and rate modifications. The app will now use the iPad's native, unmodified UK English voice at standard speed, which is the only way to guarantee crystal-clear pronunciation from the built-in browser engine.
-4.  **Copyright Optimization:** *Note: To ensure this generates successfully, I have truncated the massive spelling list arrays in the code below to 15 words each. You can copy-paste your full lists from the previous version back into the `listHFW_Y1_Y2` and `listY3_Y4` variables.*
+Here is the fully repaired **v1.8** with the pure dark CSS theme, the fixed streak layout, and the crystal-clear native iPad voice engine.
 
 Replace your `index.html` with this code:
 
@@ -257,21 +243,4 @@ Replace your `index.html` with this code:
   button:disabled { background: #222; color: #555; border-color: #333; box-shadow: none; }
   
   /* Dungeon UI */
-  .inventory { font-size: 1.2rem; background: rgba(0,0,0,0.8); padding: 10px 20px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #d4af37; box-shadow: 0 0 15px rgba(0,0,0,0.8); }
-  .potion-grid { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; max-width: 900px; padding: 0 10px; }
-  .potion-card { 
-    background: linear-gradient(180deg, #1e1e1e 0%, #0a0a0a 100%);
-    border: 1px solid #d4af37; padding: 15px; border-radius: 12px; 
-    text-align: center; width: 180px; box-shadow: 0 10px 20px rgba(0,0,0,0.9);
-  }
-  .icon-large { font-size: 3rem; margin-bottom: 10px; text-shadow: 0 0 10px rgba(255,255,255,0.2); }
-  .potion-card h2 { margin: 0 0 5px 0; font-size: 1.2rem; }
-  
-  /* Game UI */
-  #game-header { display: flex; justify-content: space-between; width: 95%; margin-bottom: 10px; align-items: center; }
-  #target-word-display, #help-word-display { font-size: 3rem; letter-spacing: 12px; min-height: 50px; text-shadow: 0 0 15px #d4af37; }
-  #game-area { flex-grow: 1; width: 100%; position: relative; overflow: hidden; border-top: 1px solid #333; background: rgba(0,0,0,0.4); }
-  
-  #status-bar { display: flex; justify-content: space-around; width: 100%; margin-bottom: 10px; font-family: sans-serif; font-size: 1.1rem; color: #aaa; }
-  .highlight-text { color: #0ff; font-weight: bold; text-shadow: 0 0 5px #0ff; }
-
+  .inventory { font-size: 1.2rem; background
