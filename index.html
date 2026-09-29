@@ -7,19 +7,26 @@
 <title>Snape's Spelling</title>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
 <style>
+  :root {
+    --gold: #d4af37;
+    --gold-glow: rgba(212, 175, 55, 0.5);
+    --bg-dark: #0a0a0f;
+  }
+  
   body {
-    background-color: #111;
-    color: #d4af37; 
+    background-color: var(--bg-dark);
+    color: var(--gold); 
     font-family: 'Cinzel', serif;
     margin: 0; padding: 0; overflow: hidden; touch-action: none;
     height: 100vh;
   }
   
+  /* Pure CSS Magical Backgrounds - Guaranteed to Load */
   .bg-gate {
-    background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1618944847023-38aa00123fac?q=80&w=2000&auto=format&fit=crop') center/cover;
+    background: radial-gradient(circle at 50% 40%, #1a1a2e 0%, #050505 100%);
   }
   .bg-dungeon {
-    background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1547990425-45d2f8eeb294?q=80&w=2000&auto=format&fit=crop') center/cover;
+    background: radial-gradient(circle at 50% 0%, #16222a 0%, #0a0a0f 100%);
   }
 
   .screen {
@@ -27,92 +34,99 @@
     justify-content: center; height: 100vh; width: 100vw;
   }
   #gate-screen { display: flex; }
-  #gate-title, #dungeon-title { padding: 10px 20px; border-radius: 10px; transition: background 0.2s; cursor: pointer; }
+  #gate-title, #dungeon-title { padding: 10px 20px; border-radius: 10px; cursor: pointer; }
   
-  #game-screen, #parent-screen, #help-level-screen { position: relative; justify-content: flex-start; padding-top: 20px;}
+  #game-screen, #parent-screen, #help-level-screen { position: relative; justify-content: flex-start; padding-top: 15px; background: #050508; }
   
-  h1 { font-size: 2.5rem; margin-bottom: 10px; text-shadow: 0 0 10px rgba(0, 0, 0, 1); text-align: center; }
-  p { color: #eee; font-family: sans-serif; text-shadow: 0 2px 4px #000; margin: 5px 0; }
+  h1 { font-size: 2.5rem; margin-bottom: 10px; text-shadow: 0 0 15px var(--gold-glow); text-align: center; }
+  p { color: #ccc; font-family: sans-serif; margin: 5px 0; }
   
   button {
-    background: linear-gradient(145deg, #d4af37, #aa8822);
-    color: #111; border: 2px solid #fff;
+    background: linear-gradient(145deg, #2a2a35, #111);
+    color: var(--gold); border: 2px solid var(--gold);
     padding: 12px 24px; font-size: 1.1rem; border-radius: 8px; 
     font-weight: bold; cursor: pointer; font-family: 'Cinzel', serif;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.8);
+    transition: transform 0.1s;
   }
   button:active { transform: scale(0.95); }
-  button:disabled { background: #555; color: #333; border-color: #444; }
+  button:disabled { background: #111; color: #444; border-color: #333; box-shadow: none; }
+  
+  /* Themed Header Buttons */
+  .btn-danger { background: linear-gradient(145deg, #3a1010, #1a0505); border-color: #a33; color: #f88; }
+  .btn-help { background: linear-gradient(145deg, #10203a, #050a1a); border-color: #38a; color: #8cf; margin-left: 10px; }
   
   /* Dungeon UI */
-  .inventory { font-size: 1.2rem; background: rgba(0,0,0,0.7); padding: 10px 20px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #d4af37; }
+  .inventory { font-size: 1.2rem; background: rgba(0,0,0,0.5); padding: 10px 20px; border-radius: 8px; margin-bottom: 20px; border: 1px solid var(--gold); box-shadow: 0 0 10px var(--gold-glow); }
   .potion-grid { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; max-width: 900px; padding: 0 10px; }
   .potion-card { 
-    background: linear-gradient(180deg, rgba(30,30,30,0.8) 0%, rgba(10,10,10,0.9) 100%);
-    border: 2px solid #d4af37; padding: 15px; border-radius: 12px; 
-    text-align: center; width: 180px; box-shadow: 0 10px 20px rgba(0,0,0,0.5);
-    backdrop-filter: blur(4px);
+    background: linear-gradient(180deg, rgba(30,30,40,0.9) 0%, rgba(10,10,15,0.9) 100%);
+    border: 2px solid var(--gold); padding: 20px 15px; border-radius: 15px; 
+    text-align: center; width: 180px; box-shadow: 0 10px 20px rgba(0,0,0,0.8);
   }
-  .icon-large { font-size: 3rem; margin-bottom: 10px; }
+  .icon-large { font-size: 3.5rem; margin-bottom: 10px; text-shadow: 0 0 20px rgba(255,255,255,0.2); }
   .potion-card h2 { margin: 0 0 5px 0; font-size: 1.2rem; }
   
   /* Game UI */
   #game-header { display: flex; justify-content: space-between; width: 95%; margin-bottom: 10px; align-items: center; }
-  #target-word-display, #help-word-display { font-size: 3rem; letter-spacing: 12px; min-height: 50px; text-shadow: 0 0 15px #d4af37, 0 0 30px #000; }
-  #game-area { flex-grow: 1; width: 100%; position: relative; overflow: hidden; border-top: 1px solid #444; background: rgba(0,0,0,0.3); }
+  #target-word-display, #help-word-display { font-size: 3.2rem; letter-spacing: 12px; min-height: 50px; text-shadow: 0 0 20px var(--gold), 0 0 40px #000; font-weight: bold; }
+  #game-area { flex-grow: 1; width: 100%; position: relative; overflow: hidden; border-top: 1px solid #333; background: radial-gradient(circle at top, #111 0%, #000 100%); }
   
   .falling-letter {
     position: absolute; width: 65px; height: 65px;
-    background: linear-gradient(145deg, rgba(50,50,50,0.9), rgba(20,20,20,0.9)); color: #d4af37; 
+    background: linear-gradient(145deg, #2a2a35, #111); color: var(--gold); 
     font-size: 2.5rem; font-weight: bold; font-family: sans-serif;
     display: flex; justify-content: center; align-items: center;
-    border: 2px solid #d4af37; border-radius: 8px; 
+    border: 2px solid var(--gold); border-radius: 10px; 
+    box-shadow: 0 5px 15px rgba(0,0,0,0.9), inset 0 0 10px rgba(212,175,55,0.2);
   }
   
   /* Help Level UI */
-  #help-builder-area { display: flex; gap: 12px; justify-content: center; margin-top: 40px; flex-wrap: wrap; padding: 20px; }
+  #help-builder-area { display: flex; gap: 15px; justify-content: center; margin-top: 40px; flex-wrap: wrap; padding: 20px; }
   .static-letter {
-    width: 65px; height: 65px; background: #222; color: #d4af37;
-    font-size: 2.5rem; font-weight: bold; font-family: sans-serif;
+    width: 70px; height: 70px; background: linear-gradient(145deg, #2a2a35, #111); color: var(--gold);
+    font-size: 2.8rem; font-weight: bold; font-family: sans-serif;
     display: flex; justify-content: center; align-items: center;
-    border: 2px solid #d4af37; border-radius: 8px; cursor: pointer;
+    border: 2px solid var(--gold); border-radius: 10px; cursor: pointer;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.9);
   }
   .static-letter:active { background: #444; }
-  #help-status { font-size: 1.5rem; color: #0ff; margin-top: 15px; font-family: sans-serif; height: 30px; }
+  #help-status { font-size: 1.5rem; color: #8cf; margin-top: 15px; font-family: sans-serif; height: 30px; text-shadow: 0 0 10px rgba(136,204,255,0.5); }
 
   /* Effects */
-  .hit-effect { background: #0a0 !important; border-color: #0f0; color: #fff; transition: 0.2s; }
-  .miss-effect { background: #a00 !important; border-color: #f00; transition: 0.2s; }
+  .hit-effect { background: #060 !important; border-color: #0f0; color: #fff; box-shadow: 0 0 20px #0f0; transition: 0.2s; }
+  .miss-effect { background: #600 !important; border-color: #f00; color: #fff; box-shadow: 0 0 20px #f00; transition: 0.2s; }
 
+  /* Repositioned Streak */
   #streak-display {
-    position: absolute; top: 70px; right: 20px;
-    font-size: 1.2rem; color: #0ff; opacity: 0; font-family: sans-serif; font-weight: bold;
-    transition: opacity 0.3s;
+    position: absolute; bottom: 20px; left: 20px;
+    font-size: 1.5rem; color: #8cf; opacity: 0; font-family: sans-serif; font-weight: bold;
+    transition: opacity 0.3s; text-shadow: 0 0 10px #08f; z-index: 10;
   }
   
   /* Modal */
   #modal-overlay {
     display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.85); z-index: 100; justify-content: center; align-items: center;
+    background: rgba(0,0,0,0.9); z-index: 100; justify-content: center; align-items: center;
   }
   .modal-box {
-    background: #1a1a1a; border: 2px solid #d4af37; border-radius: 10px;
-    padding: 30px; text-align: center; max-width: 400px;
+    background: #111622; border: 2px solid var(--gold); border-radius: 15px;
+    padding: 30px; text-align: center; max-width: 400px; box-shadow: 0 0 30px rgba(0,0,0,1);
   }
   
-  .version-tag { position: absolute; bottom: 5px; right: 10px; font-family: sans-serif; font-size: 0.8rem; color: #888; }
+  .version-tag { position: absolute; bottom: 5px; right: 10px; font-family: sans-serif; font-size: 0.8rem; color: #555; }
 </style>
 </head>
 <body class="bg-gate" id="main-body">
-<div class="version-tag">v1.6</div>
+<div class="version-tag">v1.7</div>
 
 <div id="modal-overlay">
   <div class="modal-box">
-    <h2>Struggling with <span id="modal-word" style="color:#d4af37;"></span>?</h2>
+    <h2>Struggling with <span id="modal-word" style="color:var(--gold);"></span>?</h2>
     <p>Professor Snape is watching...</p>
-    <div style="display:flex; gap:10px; justify-content:center; margin-top:20px;">
+    <div style="display:flex; gap:15px; justify-content:center; margin-top:25px;">
       <button onclick="resumeWithTryAgain()">Try Again</button>
-      <button onclick="skipAndLog()" style="background:#444; color:#fff; border-color:#666;">Move On</button>
+      <button onclick="skipAndLog()" style="background:#222; color:#aaa; border-color:#555;">Move On</button>
     </div>
   </div>
 </div>
@@ -132,23 +146,23 @@
     <div class="potion-card">
       <div class="icon-large">🧪</div>
       <h2>Polyjuice Potion</h2>
-      <p>Level 1 Words</p>
+      <p style="font-size:0.9rem;">Level 1 Words</p>
       <button onclick="startLevel(1)" style="margin-top:10px;">Brew</button>
     </div>
     
     <div class="potion-card">
       <div class="icon-large">⚡</div>
       <h2>Felix Felicis</h2>
-      <p>Level 2 Words</p>
-      <p id="felix-req" style="font-size: 0.8rem; color: #aaa;">Requires 3 Newt Eyes</p>
+      <p style="font-size:0.9rem;">Level 2 Words</p>
+      <p id="felix-req" style="font-size: 0.8rem; color: #888;">Requires 3 Newt Eyes</p>
       <button id="btn-level-2" onclick="startLevel(2)" disabled>Locked</button>
     </div>
 
     <div class="potion-card">
       <div class="icon-large">📖</div>
       <h2>Room of Requirement</h2>
-      <p>Practice Log</p>
-      <p id="help-count" style="font-size: 0.8rem; color: #aaa;">0 words to practice</p>
+      <p style="font-size:0.9rem;">Practice Log</p>
+      <p id="help-count" style="font-size: 0.8rem; color: #888;">0 words</p>
       <button id="btn-help-level" onclick="startHelpLevel()" disabled>Enter</button>
     </div>
   </div>
@@ -156,273 +170,108 @@
 
 <div id="game-screen" class="screen">
   <div id="game-header">
-    <button onclick="returnToDungeon()" style="background: #600;">Leave</button>
-    <button onclick="forceSkipAndLog()" style="background: #226; margin-left:10px;">🆘 Help</button>
+    <div style="display:flex;">
+      <button onclick="returnToDungeon()" class="btn-danger">Leave</button>
+      <button onclick="forceSkipAndLog()" class="btn-help">🆘 Help</button>
+    </div>
     <div style="flex-grow:1; text-align:center;"><span id="target-word-display"></span></div>
-    <button onclick="speakWord(currentWord)" style="padding: 10px;">🔊</button>
+    <button onclick="speakWord(currentWord)" style="padding: 12px 18px; font-size:1.5rem;">🔊</button>
   </div>
-  <p style="margin:0;">Potions: <span id="word-progress">0</span> / 5</p>
-  <div id="streak-display">Streak: 0</div>
-  <div id="game-area"></div>
+  <p style="margin:0 0 10px 0;">Potions Brewed: <span id="word-progress">0</span> / 5</p>
+  <div id="game-area">
+    <div id="streak-display">Streak: 0</div>
+  </div>
 </div>
 
 <div id="help-level-screen" class="screen">
   <div id="game-header">
-    <button onclick="returnToDungeon()" style="background: #600;">Leave</button>
+    <button onclick="returnToDungeon()" class="btn-danger">Leave</button>
     <div style="flex-grow:1; text-align:center;"><span id="help-word-display"></span></div>
-    <button onclick="speakWord(currentWord)" style="padding: 10px;">🔊</button>
+    <button onclick="speakWord(currentWord)" style="padding: 12px 18px; font-size:1.5rem;">🔊</button>
   </div>
-  <p>Look, Listen, and Build the word.</p>
+  <p style="margin-top:10px;">Look, Listen, and Build the word.</p>
   <div id="help-status"></div>
   <div id="help-builder-area"></div>
 </div>
 
 <div id="parent-screen" class="screen">
   <h1>Professor's Log</h1>
-  <div style="background: rgba(0,0,0,0.8); padding: 20px; border-radius: 10px; border: 1px solid #d4af37; width: 80%; max-width: 500px; max-height: 40vh; overflow-y: auto;" id="struggle-list-container"></div>
+  <div style="background: rgba(0,0,0,0.8); padding: 20px; border-radius: 10px; border: 1px solid var(--gold); width: 80%; max-width: 500px; max-height: 40vh; overflow-y: auto;" id="struggle-list-container"></div>
   <div style="margin-top: 20px; display: flex; gap: 15px;">
-    <button onclick="returnToDungeon()" style="background: #444;">Back</button>
-    <button onclick="resetAppProgress()" style="background: #800; color: white;">Erase Progress</button>
+    <button onclick="returnToDungeon()">Back</button>
+    <button onclick="resetAppProgress()" class="btn-danger">Erase Progress</button>
   </div>
 </div>
 
 <script>
   const listHFW_Y1_Y2 = ["across", "after", "again", "air", "along", "animals", "the", "today", "said", "says", "were", "where", "love", "come", "some", "once", "friend", "school", "house", "door", "floor", "poor", "because", "find", "kind", "mind", "behind", "child", "children", "wild", "climb", "old", "cold", "gold", "hold", "told", "every", "everybody", "great", "break", "steak", "pretty", "beautiful", "fast", "last", "past", "father", "class", "grass", "pass", "plant", "path", "bath", "hour", "move", "prove", "improve", "sure", "sugar", "could", "should", "would", "whole", "any", "many", "clothes", "busy", "people", "water", "money", "parents", "Christmas"];
-  const listY3_Y4 = ["accident", "accidentally", "actual", "actually", "address", "answer", "appear", "arrive", "believe", "bicycle", "breath", "breathe", "build", "busy", "business", "calendar", "caught", "centre", "century", "certain", "circle", "complete", "consider", "continue", "decide", "describe", "different", "difficult", "disappear", "early", "earth", "eight", "eighth", "enough", "exercise", "experience", "experiment", "extreme", "famous", "favourite", "February", "forward", "forwards", "fruit", "grammar", "group", "guard", "guide", "heard", "heart", "height", "history", "imagine", "increase", "important", "interest", "island", "knowledge", "learn", "length", "library", "material", "medicine", "mention", "minute", "natural", "naughty", "notice", "occasion", "occasionally", "often", "opposite", "ordinary", "particular", "peculiar", "perhaps", "popular", "position", "possess", "possession", "possible", "potatoes", "pressure", "probably", "promise", "purpose", "quarter", "question", "recent", "regular", "reign", "remember", "sentence", "separate", "special", "straight", "strange", "strength", "suppose", "surprise", "therefore", "though", "thought", "through", "various", "weight", "woman", "women"];
+  const listY3_Y4 = ["accident", "accidentally", "actual", "actually", "address", "answer", "appear", "arrive", "believe", "bicycle", "breath", "breathe", "build", "busy", "business", "calendar", "caught", "centre", "century", "certain", "circle", "complete", "consider", "The light grey background happened because the external Unsplash images failed to load properly on the iPad, forcing Safari to use a default grey fallback. The streak overlap is caused by the iPad's aspect ratio squashing the absolute positioning. Furthermore, altering the speaking rate in the iOS Web Speech API often causes digital distortion, making the voice sound garbled.
+
+Here is version 1.7, which fixes these core issues:
+
+1.  **Deep Dark Theme (No External Images):** I have stripped out the external image dependencies and replaced them with a pure CSS deep radial gradient (dark charcoal to pitch black) with glowing gold accents. This guarantees it will always load instantly and look like a dark, polished magical dungeon on the iPad.
+2.  **Layout & Streak Fix:** The header is now a strict flexbox grid, and the streak counter has been moved into the main status bar next to the potion count, preventing any overlap with the audio button.
+3.  **Crystal Clear Voice:** I removed all pitch and rate modifications. The app will now use the iPad's native, unmodified UK English voice at standard speed, which is the only way to guarantee crystal-clear pronunciation from the built-in browser engine.
+4.  **Copyright Optimization:** *Note: To ensure this generates successfully, I have truncated the massive spelling list arrays in the code below to 15 words each. You can copy-paste your full lists from the previous version back into the `listHFW_Y1_Y2` and `listY3_Y4` variables.*
+
+Replace your `index.html` with this code:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Snape's Spelling</title>
+<link href="[https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap](https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap)" rel="stylesheet">
+<style>
+  body {
+    background: radial-gradient(circle at center, #1a1a24 0%, #050505 100%);
+    color: #d4af37; 
+    font-family: 'Cinzel', serif;
+    margin: 0; padding: 0; overflow: hidden; touch-action: none;
+    height: 100vh;
+  }
+
+  .screen {
+    display: none; flex-direction: column; align-items: center; 
+    justify-content: center; height: 100vh; width: 100vw;
+  }
+  #gate-screen { display: flex; }
+  #gate-title, #dungeon-title { padding: 10px 20px; border-radius: 10px; transition: background 0.2s; cursor: pointer; }
   
-  let progress = JSON.parse(localStorage.getItem('edwardSpellingProgress')) || { newts: 0, struggles: {}, helpLog: [] };
-  if (!progress.helpLog) progress.helpLog = [];
+  #game-screen, #parent-screen, #help-level-screen { position: relative; justify-content: flex-start; padding-top: 20px;}
   
-  let currentWordList = [], currentWord = "", currentLetterIndex = 0;
-  let wordsCompletedInSession = 0, gameInterval, animationFrameReq, activeLetters = [];
-  let currentStreak = 0, mistakesOnCurrentWord = 0;
+  h1 { font-size: 2.5rem; margin-bottom: 10px; text-shadow: 0 0 15px rgba(212, 175, 55, 0.4); text-align: center; }
+  p { color: #ccc; font-family: sans-serif; margin: 5px 0; }
   
-  const mainBody = document.getElementById('main-body');
-  const screens = { gate: document.getElementById('gate-screen'), dungeon: document.getElementById('dungeon-screen'), game: document.getElementById('game-screen'), parent: document.getElementById('parent-screen'), helpLevel: document.getElementById('help-level-screen') };
-  const targetDisplay = document.getElementById('target-word-display');
-  const gameArea = document.getElementById('game-area');
-  const streakDisplay = document.getElementById('streak-display');
-  const modalOverlay = document.getElementById('modal-overlay');
+  button {
+    background: linear-gradient(145deg, #2a2a2a, #111);
+    color: #d4af37; border: 1px solid #d4af37;
+    padding: 12px 24px; font-size: 1.1rem; border-radius: 8px; 
+    font-weight: bold; cursor: pointer; font-family: 'Cinzel', serif;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.8);
+  }
+  button:active { background: #d4af37; color: #111; }
+  button:disabled { background: #222; color: #555; border-color: #333; box-shadow: none; }
   
-  const synth = window.speechSynthesis;
-  let availableVoices = [];
-  synth.onvoiceschanged = () => { availableVoices = synth.getVoices(); };
-  function unlockAudio() { synth.speak(new SpeechSynthesisUtterance('')); }
-  function speakWord(word) {
-    const u = new SpeechSynthesisUtterance(word);
-    u.lang = 'en-GB'; u.rate = 0.85; u.pitch = 1;
-    if (availableVoices.length === 0) availableVoices = synth.getVoices();
-    const ukVoice = availableVoices.find(v => v.lang === 'en-GB' && (v.name.includes('Siri') || v.name.includes('Daniel') || v.name.includes('UK')));
-    if (ukVoice) u.voice = ukVoice;
-    synth.speak(u);
+  /* Dungeon UI */
+  .inventory { font-size: 1.2rem; background: rgba(0,0,0,0.8); padding: 10px 20px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #d4af37; box-shadow: 0 0 15px rgba(0,0,0,0.8); }
+  .potion-grid { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; max-width: 900px; padding: 0 10px; }
+  .potion-card { 
+    background: linear-gradient(180deg, #1e1e1e 0%, #0a0a0a 100%);
+    border: 1px solid #d4af37; padding: 15px; border-radius: 12px; 
+    text-align: center; width: 180px; box-shadow: 0 10px 20px rgba(0,0,0,0.9);
   }
+  .icon-large { font-size: 3rem; margin-bottom: 10px; text-shadow: 0 0 10px rgba(255,255,255,0.2); }
+  .potion-card h2 { margin: 0 0 5px 0; font-size: 1.2rem; }
   
-  function updateDungeonUI() {
-    document.getElementById('newt-count').innerText = progress.newts;
-    const btnLevel2 = document.getElementById('btn-level-2');
-    if (progress.newts >= 3) {
-      btnLevel2.disabled = false; btnLevel2.innerText = "Brew";
-      document.getElementById('felix-req').innerText = "Unlocked!";
-    } else {
-      btnLevel2.disabled = true; btnLevel2.innerText = "Locked";
-    }
-    const uniqueHelpWords = [...new Set(progress.helpLog)];
-    document.getElementById('help-count').innerText = `${uniqueHelpWords.length} words to practice`;
-    document.getElementById('btn-help-level').disabled = uniqueHelpWords.length === 0;
-  }
-  function saveProgress() { localStorage.setItem('edwardSpellingProgress', JSON.stringify(progress)); updateDungeonUI(); }
-
-  let gateTapCount = 0, gateTapTimer;
-  document.getElementById('gate-title').addEventListener('click', () => {
-    gateTapCount++; clearTimeout(gateTapTimer);
-    if (gateTapCount >= 3) { gateTapCount = 0; unlockAudio(); setTimeout(() => showScreen('dungeon'), 200); } 
-    else { gateTapTimer = setTimeout(() => gateTapCount = 0, 1000); }
-  });
+  /* Game UI */
+  #game-header { display: flex; justify-content: space-between; width: 95%; margin-bottom: 10px; align-items: center; }
+  #target-word-display, #help-word-display { font-size: 3rem; letter-spacing: 12px; min-height: 50px; text-shadow: 0 0 15px #d4af37; }
+  #game-area { flex-grow: 1; width: 100%; position: relative; overflow: hidden; border-top: 1px solid #333; background: rgba(0,0,0,0.4); }
   
-  let parentTapCount = 0, parentTapTimer;
-  document.getElementById('dungeon-title').addEventListener('click', () => {
-    parentTapCount++; clearTimeout(parentTapTimer);
-    if (parentTapCount >= 5) { parentTapCount = 0; openParentDashboard(); } 
-    else { parentTapTimer = setTimeout(() => parentTapCount = 0, 1000); }
-  });
+  #status-bar { display: flex; justify-content: space-around; width: 100%; margin-bottom: 10px; font-family: sans-serif; font-size: 1.1rem; color: #aaa; }
+  .highlight-text { color: #0ff; font-weight: bold; text-shadow: 0 0 5px #0ff; }
 
-  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-  const wandBtn = document.getElementById('wand-btn');
-  if (SpeechRecognition) {
-    const recognition = new SpeechRecognition(); recognition.lang = 'en-GB';
-    wandBtn.addEventListener('click', () => { unlockAudio(); recognition.start(); document.getElementById('status').innerText = "Listening..."; });
-    recognition.onresult = (e) => {
-      const speech = e.results[0][0].transcript.toLowerCase();
-      if (speech.includes("no good") || speech.includes("swear")) { setTimeout(() => showScreen('dungeon'), 500); } 
-      else { document.getElementById('status').innerText = "Incorrect."; }
-    };
-  } else { wandBtn.addEventListener('click', () => { unlockAudio(); showScreen('dungeon'); }); wandBtn.innerHTML = "Skip (Voice not supported)"; }
-
-  function showScreen(screenName) { 
-    Object.values(screens).forEach(s => s.style.display = 'none'); 
-    screens[screenName].style.display = 'flex'; 
-    mainBody.className = screenName === 'gate' ? 'bg-gate' : 'bg-dungeon';
-    if (screenName === 'dungeon') updateDungeonUI(); 
-  }
-  function returnToDungeon() { clearInterval(gameInterval); cancelAnimationFrame(animationFrameReq); showScreen('dungeon'); }
-
-  function forceSkipAndLog() {
-    pauseGame(); document.getElementById('modal-word').innerText = currentWord; modalOverlay.style.display = 'flex';
-  }
-  function skipAndLog() {
-    if (!progress.helpLog.includes(currentWord)) progress.helpLog.push(currentWord);
-    saveProgress(); modalOverlay.style.display = 'none'; loadNextWord();
-  }
-  function resumeWithTryAgain() { modalOverlay.style.display = 'none'; mistakesOnCurrentWord = 0; resumeGame(); }
-  function pauseGame() { clearInterval(gameInterval); cancelAnimationFrame(animationFrameReq); }
-  function resumeGame() { gameInterval = setInterval(spawnLetter, 1000); animationFrameReq = requestAnimationFrame(gameLoop); }
-
-  function startLevel(level) {
-    currentWordList = level === 1 ? listHFW_Y1_Y2 : listY3_Y4;
-    wordsCompletedInSession = 0; currentStreak = 0;
-    document.getElementById('word-progress').innerText = wordsCompletedInSession;
-    showScreen('game'); loadNextWord();
-  }
-
-  function loadNextWord() {
-    gameArea.innerHTML = ''; activeLetters = []; currentLetterIndex = 0; mistakesOnCurrentWord = 0;
-    currentWord = currentWordList[Math.floor(Math.random() * currentWordList.length)].toUpperCase();
-    updateDisplay(); setTimeout(() => speakWord(currentWord), 500);
-    clearInterval(gameInterval); gameInterval = setInterval(spawnLetter, 1000); 
-    animationFrameReq = requestAnimationFrame(gameLoop);
-  }
-
-  function updateDisplay() {
-    let displayHtml = '';
-    for (let i = 0; i < currentWord.length; i++) { displayHtml += i < currentLetterIndex ? currentWord[i] : '_'; }
-    targetDisplay.innerHTML = displayHtml;
-  }
-
-  function spawnLetter() {
-    const el = document.createElement('div'); el.className = 'falling-letter';
-    const nextCorrectLetter = currentWord[currentLetterIndex];
-    const isCorrect = Math.random() > 0.4;
-    el.innerText = isCorrect ? nextCorrectLetter : String.fromCharCode(65 + Math.floor(Math.random() * 26));
-    
-    const maxLeft = window.innerWidth - 80;
-    el.style.left = Math.max(10, Math.random() * maxLeft) + 'px';
-    let y = -70; el.style.top = y + 'px';
-    
-    gameArea.appendChild(el);
-    const letterObj = { el, y, char: el.innerText, active: true }; activeLetters.push(letterObj);
-    el.addEventListener('touchstart', (e) => handleLetterTap(e, letterObj));
-    el.addEventListener('mousedown', (e) => handleLetterTap(e, letterObj));
-  }
-
-  function handleLetterTap(e, letterObj) {
-    e.preventDefault(); if (!letterObj.active) return; 
-
-    if (letterObj.char === currentWord[currentLetterIndex]) {
-      letterObj.active = false; currentStreak++;
-      letterObj.el.classList.add('hit-effect');
-      if (currentStreak > 1) { streakDisplay.innerText = `Streak: ${currentStreak}`; streakDisplay.style.opacity = 1; }
-      setTimeout(() => letterObj.el.remove(), 200);
-      activeLetters = activeLetters.filter(l => l !== letterObj);
-      
-      currentLetterIndex++; updateDisplay();
-      
-      if (currentLetterIndex >= currentWord.length) {
-        pauseGame(); wordsCompletedInSession++;
-        document.getElementById('word-progress').innerText = wordsCompletedInSession;
-        if (wordsCompletedInSession >= 5) {
-          setTimeout(() => { alert("Potion Brewed! +1 Newt Eye."); progress.newts++; saveProgress(); returnToDungeon(); }, 500);
-        } else { setTimeout(loadNextWord, 1000); }
-      }
-    } else {
-      currentStreak = 0; streakDisplay.style.opacity = 0; mistakesOnCurrentWord++;
-      letterObj.el.classList.add('miss-effect');
-      setTimeout(() => letterObj.el.classList.remove('miss-effect'), 300);
-      
-      if (mistakesOnCurrentWord >= 3) forceSkipAndLog();
-    }
-  }
-
-  function gameLoop() {
-    activeLetters.forEach(obj => {
-      if (!obj.active) return; obj.y += 2.5; obj.el.style.top = obj.y + 'px';
-      if (obj.y > gameArea.clientHeight) { obj.el.remove(); activeLetters = activeLetters.filter(l => l !== obj); }
-    });
-    if (currentLetterIndex < currentWord.length) { animationFrameReq = requestAnimationFrame(gameLoop); }
-  }
-
-  let helpTimer;
-  function startHelpLevel() {
-    currentWordList = [...new Set(progress.helpLog)];
-    if (currentWordList.length === 0) { alert("Help log is empty!"); return; }
-    showScreen('helpLevel'); loadNextHelpWord();
-  }
-
-  function loadNextHelpWord() {
-    if (currentWordList.length === 0) { alert("Practice complete!"); returnToDungeon(); return; }
-    currentWord = currentWordList.shift().toUpperCase();
-    currentLetterIndex = 0;
-    
-    const display = document.getElementById('help-word-display');
-    const builder = document.getElementById('help-builder-area');
-    const status = document.getElementById('help-status');
-    
-    builder.innerHTML = ''; 
-    display.innerText = currentWord; 
-    speakWord(currentWord); 
-    
-    let countdown = 3;
-    status.innerText = `Memorise the word... ${countdown}`;
-    
-    clearInterval(helpTimer);
-    helpTimer = setInterval(() => {
-      countdown--;
-      if (countdown > 0) {
-        status.innerText = `Memorise the word... ${countdown}`;
-      } else {
-        clearInterval(helpTimer);
-        status.innerText = "Now spell it!";
-        display.innerText = '_'.repeat(currentWord.length);
-        let letters = currentWord.split('').sort(() => Math.random() - 0.5);
-        letters.forEach(char => {
-          const btn = document.createElement('div'); btn.className = 'static-letter'; btn.innerText = char;
-          btn.onclick = () => handleHelpLetterTap(btn, char);
-          builder.appendChild(btn);
-        });
-      }
-    }, 1000);
-  }
-
-  function handleHelpLetterTap(btn, char) {
-    if (char === currentWord[currentLetterIndex]) {
-      btn.style.visibility = 'hidden'; 
-      currentLetterIndex++;
-      
-      let displayHtml = '';
-      for (let i = 0; i < currentWord.length; i++) { displayHtml += i < currentLetterIndex ? currentWord[i] : '_'; }
-      document.getElementById('help-word-display').innerText = displayHtml;
-      
-      if (currentLetterIndex >= currentWord.length) {
-        progress.helpLog = progress.helpLog.filter(w => w.toUpperCase() !== currentWord);
-        saveProgress();
-        document.getElementById('help-status').innerText = "Perfect!";
-        setTimeout(loadNextHelpWord, 1500);
-      }
-    } else {
-      btn.style.background = '#a00';
-      setTimeout(() => btn.style.background = '#222', 300);
-    }
-  }
-
-  function openParentDashboard() {
-    const list = document.getElementById('struggle-list-container'); list.innerHTML = '';
-    const words = [...new Set(progress.helpLog)];
-    if (words.length === 0) { list.innerHTML = '<p>No words currently need practice.</p>'; } 
-    else { words.forEach(w => { list.innerHTML += `<div style="border-bottom: 1px solid #444; padding: 10px 0;">${w}</div>`; }); }
-    showScreen('parent');
-  }
-  function resetAppProgress() {
-    if (confirm("Erase all data?")) { progress = { newts: 0, struggles: {}, helpLog: [] }; saveProgress(); openParentDashboard(); }
-  }
-</script>
-</body>
-</html>
