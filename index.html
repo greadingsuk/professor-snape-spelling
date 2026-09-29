@@ -7,211 +7,6 @@
 <title>Snape's Spelling</title>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --gold: #d4af37;
-    --gold-glow: rgba(212, 175, 55, 0.5);
-    --bg-dark: #0a0a0f;
-  }
-  
-  body {
-    background-color: var(--bg-dark);
-    color: var(--gold); 
-    font-family: 'Cinzel', serif;
-    margin: 0; padding: 0; overflow: hidden; touch-action: none;
-    height: 100vh;
-  }
-  
-  /* Pure CSS Magical Backgrounds - Guaranteed to Load */
-  .bg-gate { background: radial-gradient(circle at 50% 40%, #1a1a2e 0%, #050505 100%); }
-  .bg-dungeon { background: radial-gradient(circle at 50% 0%, #16222a 0%, #0a0a0f 100%); }
-
-  .screen {
-    display: none; flex-direction: column; align-items: center; 
-    justify-content: center; height: 100vh; width: 100vw;
-  }
-  #gate-screen { display: flex; }
-  #gate-title, #dungeon-title { padding: 10px 20px; border-radius: 10px; cursor: pointer; }
-  
-  #game-screen, #parent-screen, #help-level-screen { position: relative; justify-content: flex-start; padding-top: 15px; background: #050508; }
-  
-  h1 { font-size: 2.5rem; margin-bottom: 10px; text-shadow: 0 0 15px var(--gold-glow); text-align: center; }
-  p { color: #ccc; font-family: sans-serif; margin: 5px 0; }
-  
-  button {
-    background: linear-gradient(145deg, #2a2a35, #111);
-    color: var(--gold); border: 2px solid var(--gold);
-    padding: 12px 24px; font-size: 1.1rem; border-radius: 8px; 
-    font-weight: bold; cursor: pointer; font-family: 'Cinzel', serif;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.8);
-    transition: transform 0.1s;
-  }
-  button:active { transform: scale(0.95); }
-  button:disabled { background: #111; color: #444; border-color: #333; box-shadow: none; }
-  
-  .btn-danger { background: linear-gradient(145deg, #3a1010, #1a0505); border-color: #a33; color: #f88; }
-  .btn-help { background: linear-gradient(145deg, #10203a, #050a1a); border-color: #38a; color: #8cf; margin-left: 10px; }
-  
-  .inventory { font-size: 1.2rem; background: rgba(0,0,0,0.5); padding: 10px 20px; border-radius: 8px; margin-bottom: 20px; border: 1px solid var(--gold); box-shadow: 0 0 10px var(--gold-glow); }
-  .potion-grid { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; max-width: 900px; padding: 0 10px; }
-  .potion-card { 
-    background: linear-gradient(180deg, rgba(30,30,40,0.9) 0%, rgba(10,10,15,0.9) 100%);
-    border: 2px solid var(--gold); padding: 20px 15px; border-radius: 15px; 
-    text-align: center; width: 180px; box-shadow: 0 10px 20px rgba(0,0,0,0.8);
-  }
-  .icon-large { font-size: 3.5rem; margin-bottom: 10px; text-shadow: 0 0 20px rgba(255,255,255,0.2); }
-  .potion-card h2 { margin: 0 0 5px 0; font-size: 1.2rem; }
-  
-  #game-header { display: flex; justify-content: space-between; width: 95%; margin-bottom: 10px; align-items: center; }
-  #target-word-display, #help-word-display { font-size: 3.2rem; letter-spacing: 12px; min-height: 50px; text-shadow: 0 0 20px var(--gold), 0 0 40px #000; font-weight: bold; }
-  #game-area { flex-grow: 1; width: 100%; position: relative; overflow: hidden; border-top: 1px solid #333; background: radial-gradient(circle at top, #111 0%, #000 100%); }
-  
-  .falling-letter {
-    position: absolute; width: 65px; height: 65px;
-    background: linear-gradient(145deg, #2a2a35, #111); color: var(--gold); 
-    font-size: 2.5rem; font-weight: bold; font-family: sans-serif;
-    display: flex; justify-content: center; align-items: center;
-    border: 2px solid var(--gold); border-radius: 10px; 
-    box-shadow: 0 5px 15px rgba(0,0,0,0.9), inset 0 0 10px rgba(212,175,55,0.2);
-  }
-  
-  #help-builder-area { display: flex; gap: 15px; justify-content: center; margin-top: 40px; flex-wrap: wrap; padding: 20px; }
-  .static-letter {
-    width: 70px; height: 70px; background: linear-gradient(145deg, #2a2a35, #111); color: var(--gold);
-    font-size: 2.8rem; font-weight: bold; font-family: sans-serif;
-    display: flex; justify-content: center; align-items: center;
-    border: 2px solid var(--gold); border-radius: 10px; cursor: pointer;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.9);
-  }
-  .static-letter:active { background: #444; }
-  #help-status { font-size: 1.5rem; color: #8cf; margin-top: 15px; font-family: sans-serif; height: 30px; text-shadow: 0 0 10px rgba(136,204,255,0.5); }
-
-  .hit-effect { background: #060 !important; border-color: #0f0; color: #fff; box-shadow: 0 0 20px #0f0; transition: 0.2s; }
-  .miss-effect { background: #600 !important; border-color: #f00; color: #fff; box-shadow: 0 0 20px #f00; transition: 0.2s; }
-
-  #streak-display {
-    position: absolute; bottom: 20px; left: 20px;
-    font-size: 1.5rem; color: #8cf; opacity: 0; font-family: sans-serif; font-weight: bold;
-    transition: opacity 0.3s; text-shadow: 0 0 10px #08f; z-index: 10;
-  }
-  
-  #modal-overlay {
-    display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.9); z-index: 100; justify-content: center; align-items: center;
-  }
-  .modal-box {
-    background: #111622; border: 2px solid var(--gold); border-radius: 15px;
-    padding: 30px; text-align: center; max-width: 400px; box-shadow: 0 0 30px rgba(0,0,0,1);
-  }
-  
-  .version-tag { position: absolute; bottom: 5px; right: 10px; font-family: sans-serif; font-size: 0.8rem; color: #555; }
-</style>
-</head>
-<body class="bg-gate" id="main-body">
-<div class="version-tag">v1.7.1</div>
-
-<div id="modal-overlay">
-  <div class="modal-box">
-    <h2>Struggling with <span id="modal-word" style="color:var(--gold);"></span>?</h2>
-    <p>Professor Snape is watching...</p>
-    <div style="display:flex; gap:15px; justify-content:center; margin-top:25px;">
-      <button onclick="resumeWithTryAgain()">Try Again</button>
-      <button onclick="skipAndLog()" style="background:#222; color:#aaa; border-color:#555;">Move On</button>
-    </div>
-  </div>
-</div>
-
-<div id="gate-screen" class="screen">
-  <div id="gate-title"><h1>The Marauder's Gate</h1></div>
-  <p>State the password to enter.</p>
-  <button id="wand-btn">🪄 Tap to Speak</button>
-  <div id="status">Waiting...</div>
-</div>
-
-<div id="dungeon-screen" class="screen">
-  <div id="dungeon-title"><h1>The Potions Dungeon</h1></div>
-  <div class="inventory">Inventory: <span id="newt-count">0</span>x Newt Eyes</div>
-  
-  <div class="potion-grid">
-    <div class="potion-card">
-      <div class="icon-large">🧪</div>
-      <h2>Polyjuice Potion</h2>
-      <p style="font-size:0.9rem;">Level 1 Words</p>
-      <button onclick="startLevel(1)" style="margin-top:10px;">Brew</button>
-    </div>
-    
-    <div class="potion-card">
-      <div class="icon-large">⚡</div>
-      <h2>Felix Felicis</h2>
-      <p style="font-size:0.9rem;">Level 2 Words</p>
-      <p id="felix-req" style="font-size: 0.8rem; color: #888;">Requires 3 Newt Eyes</p>
-      <button id="btn-level-2" onclick="startLevel(2)" disabled>Locked</button>
-    </div>
-
-    <div class="potion-card">
-      <div class="icon-large">📖</div>
-      <h2>Room of Requirement</h2>
-      <p style="font-size:0.9rem;">Practice Log</p>
-      <p id="help-count" style="font-size: 0.8rem; color: #888;">0 words</p>
-      <button id="btn-help-level" onclick="startHelpLevel()" disabled>Enter</button>
-    </div>
-  </div>
-</div>
-
-<div id="game-screen" class="screen">
-  <div id="game-header">
-    <div style="display:flex;">
-      <button onclick="returnToDungeon()" class="btn-danger">Leave</button>
-      <button onclick="forceSkipAndLog()" class="btn-help">🆘 Help</button>
-    </div>
-    <div style="flex-grow:1; text-align:center;"><span id="target-word-display"></span></div>
-    <button onclick="speakWord(currentWord)" style="padding: 12px 18px; font-size:1.5rem;">🔊</button>
-  </div>
-  <p style="margin:0 0 10px 0;">Potions Brewed: <span id="word-progress">0</span> / 5</p>
-  <div id="game-area">
-    <div id="streak-display">Streak: 0</div>
-  </div>
-</div>
-
-<div id="help-level-screen" class="screen">
-  <div id="game-header">
-    <button onclick="returnToDungeon()" class="btn-danger">Leave</button>
-    <div style="flex-grow:1; text-align:center;"><span id="help-word-display"></span></div>
-    <button onclick="speakWord(currentWord)" style="padding: 12px 18px; font-size:1.5rem;">🔊</button>
-  </div>
-  <p style="margin-top:10px;">Look, Listen, and Build the word.</p>
-  <div id="help-status"></div>
-  <div id="help-builder-area"></div>
-</div>
-
-<div id="parent-screen" class="screen">
-  <h1>Professor's Log</h1>
-  <div style="background: rgba(0,0,0,0.8); padding: 20px; border-radius: 10px; border: 1px solid var(--gold); width: 80%; max-width: 500px; max-height: 40vh; overflow-y: auto;" id="struggle-list-container"></div>
-  <div style="margin-top: 20px; display: flex; gap: 15px;">
-    <button onclick="returnToDungeon()">Back</button>
-    <button onclick="resetAppProgress()" class="btn-danger">Erase Progress</button>
-  </div>
-</div>
-
-<script>
-  const listHFW_Y1_Y2 = ["across", "after", "again", "air", "along", "animals", "the", "today", "said", "says", "were", "where", "love", "come", "some", "once", "friend", "school", "house", "door", "floor", "poor", "because", "find", "kind", "mind", "behind", "child", "children", "wild", "climb", "old", "cold", "gold", "hold", "told", "every", "everybody", "great", "break", "steak", "pretty", "beautiful", "fast", "last", "past", "father", "class", "grass", "pass", "plant", "path", "bath", "hour", "move", "prove", "improve", "sure", "sugar", "could", "should", "would", "whole", "any", "many", "clothes", "busy", "people", "water", "money", "parents", "Christmas"];
-  const listY3_Y4 = ["accident", "accidentally", "actual", "actually", "address", "answer", "appear", "arrive", "believe", "bicycle", "breath", "breathe", "build", "busy", "business", "calendar", "caught", "centre", "century", "certain", "circle", "complete", "consider", "continue", "The previous code broke because a system filter interrupted the generation of the massive spelling lists, causing a JavaScript syntax error that broke all the buttons and voice triggers on the page. 
-
-To ensure the code compiles perfectly this time, I have removed the giant lists of curriculum words from the code below. **You will need to paste your full spelling lists back into the two array variables at the very top of the `<script>` section.**
-
-Here is the fully repaired **v1.8** with the pure dark CSS theme, the fixed streak layout, and the crystal-clear native iPad voice engine.
-
-Replace your `index.html` with this code:
-
-```html
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<title>Snape's Spelling</title>
-<link href="[https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap](https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap)" rel="stylesheet">
-<style>
   body {
     background: radial-gradient(circle at center, #1a1a24 0%, #050505 100%);
     color: #d4af37; 
@@ -230,7 +25,7 @@ Replace your `index.html` with this code:
   #game-screen, #parent-screen, #help-level-screen { position: relative; justify-content: flex-start; padding-top: 20px;}
   
   h1 { font-size: 2.5rem; margin-bottom: 10px; text-shadow: 0 0 15px rgba(212, 175, 55, 0.4); text-align: center; }
-  p { color: #ccc; font-family: sans-serif; margin: 5px 0; }
+  p { color: #ccc; font-family: sans-serif; margin: 5px 0; text-align: center; }
   
   button {
     background: linear-gradient(145deg, #2a2a2a, #111);
@@ -242,5 +37,432 @@ Replace your `index.html` with this code:
   button:active { background: #d4af37; color: #111; }
   button:disabled { background: #222; color: #555; border-color: #333; box-shadow: none; }
   
-  /* Dungeon UI */
-  .inventory { font-size: 1.2rem; background
+  .inventory { font-size: 1.2rem; background: rgba(0,0,0,0.8); padding: 10px 20px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #d4af37; box-shadow: 0 0 15px rgba(0,0,0,0.8); }
+  .potion-grid { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; max-width: 900px; padding: 0 10px; }
+  .potion-card { 
+    background: linear-gradient(180deg, #1e1e1e 0%, #0a0a0a 100%);
+    border: 1px solid #d4af37; padding: 15px; border-radius: 12px; 
+    text-align: center; width: 180px; box-shadow: 0 10px 20px rgba(0,0,0,0.9);
+  }
+  .icon-large { font-size: 3rem; margin-bottom: 10px; text-shadow: 0 0 10px rgba(255,255,255,0.2); }
+  .potion-card h2 { margin: 0 0 5px 0; font-size: 1.2rem; }
+  
+  #game-header { display: flex; justify-content: space-between; width: 95%; margin-bottom: 10px; align-items: center; }
+  #target-word-display, #help-word-display { font-size: 3rem; letter-spacing: 12px; min-height: 50px; text-shadow: 0 0 15px #d4af37; }
+  #game-area { flex-grow: 1; width: 100%; position: relative; overflow: hidden; border-top: 1px solid #333; background: rgba(0,0,0,0.4); }
+  
+  #status-bar { display: flex; justify-content: space-around; width: 100%; margin-bottom: 10px; font-family: sans-serif; font-size: 1.1rem; color: #aaa; }
+  .highlight-text { color: #0ff; font-weight: bold; text-shadow: 0 0 5px #0ff; }
+
+  .falling-letter {
+    position: absolute; width: 65px; height: 65px;
+    background: linear-gradient(145deg, #333, #111); color: #d4af37; 
+    font-size: 2.5rem; font-weight: bold; font-family: sans-serif;
+    display: flex; justify-content: center; align-items: center;
+    border: 2px solid #d4af37; border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.8);
+  }
+  
+  #help-builder-area { display: flex; gap: 12px; justify-content: center; margin-top: 40px; flex-wrap: wrap; padding: 20px; }
+  .static-letter {
+    width: 65px; height: 65px; background: #222; color: #d4af37;
+    font-size: 2.5rem; font-weight: bold; font-family: sans-serif;
+    display: flex; justify-content: center; align-items: center;
+    border: 2px solid #d4af37; border-radius: 8px; cursor: pointer;
+  }
+  .static-letter:active { background: #d4af37; color: #111; }
+  #help-status { font-size: 1.5rem; color: #0ff; margin-top: 15px; font-family: sans-serif; height: 30px; }
+
+  .hit-effect { background: #0a0 !important; border-color: #0f0; color: #fff; transition: 0.2s; box-shadow: 0 0 20px #0f0; }
+  .miss-effect { background: #a00 !important; border-color: #f00; transition: 0.2s; }
+  
+  #modal-overlay {
+    display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.9); z-index: 100; justify-content: center; align-items: center;
+  }
+  .modal-box {
+    background: #111; border: 2px solid #d4af37; border-radius: 10px;
+    padding: 30px; text-align: center; max-width: 400px; box-shadow: 0 0 30px rgba(212, 175, 55, 0.2);
+  }
+  
+  .version-tag { position: absolute; bottom: 5px; right: 10px; font-family: sans-serif; font-size: 0.8rem; color: #444; }
+  #error-log { color: #f55; font-family: sans-serif; font-size: 0.9rem; margin-top: 20px; max-width: 80%; text-align: center; }
+</style>
+</head>
+<body id="main-body">
+<div class="version-tag">v1.9</div>
+
+<div id="modal-overlay">
+  <div class="modal-box">
+    <h2>Struggling with <br><span id="modal-word" style="color:#d4af37; font-size: 2.5rem; letter-spacing: 5px; display:block; margin: 15px 0;"></span></h2>
+    <p style="margin-bottom: 25px;">Professor Snape is watching...</p>
+    <div style="display:flex; gap:15px; justify-content:center;">
+      <button onclick="resumeWithTryAgain()">Try Again</button>
+      <button onclick="skipAndLog()" style="background:#444; color:#ccc; border-color:#555;">Move On</button>
+    </div>
+  </div>
+</div>
+
+<div id="gate-screen" class="screen">
+  <div id="gate-title"><h1>The Marauder's Gate</h1></div>
+  <p>State the password to enter.</p>
+  <button id="wand-btn" style="margin-top: 20px;">🪄 Tap to Speak</button>
+  <button id="skip-btn" style="margin-top: 15px; background: transparent; border: none; box-shadow: none; color: #777; font-size: 0.9rem;">Skip (No Mic)</button>
+  <div id="status" style="margin-top: 15px; color: #888;">Waiting...</div>
+  <div id="error-log"></div>
+</div>
+
+<div id="dungeon-screen" class="screen">
+  <div id="dungeon-title"><h1>The Potions Dungeon</h1></div>
+  <div class="inventory">Inventory: <span id="newt-count" style="color: #0ff;">0</span>x Newt Eyes</div>
+  
+  <div class="potion-grid">
+    <div class="potion-card">
+      <div class="icon-large">🧪</div>
+      <h2>Polyjuice Potion</h2>
+      <p>Level 1 Words</p>
+      <button onclick="startLevel(1)" style="margin-top:10px;">Brew</button>
+    </div>
+    
+    <div class="potion-card">
+      <div class="icon-large">⚡</div>
+      <h2>Felix Felicis</h2>
+      <p>Level 2 Words</p>
+      <p id="felix-req" style="font-size: 0.8rem; color: #777;">Requires 3 Newt Eyes</p>
+      <button id="btn-level-2" onclick="startLevel(2)" disabled>Locked</button>
+    </div>
+
+    <div class="potion-card">
+      <div class="icon-large">📖</div>
+      <h2>Room of Requirement</h2>
+      <p>Practice Log</p>
+      <p id="help-count" style="font-size: 0.8rem; color: #777;">0 words to practice</p>
+      <button id="btn-help-level" onclick="startHelpLevel()" disabled>Enter</button>
+    </div>
+  </div>
+</div>
+
+<div id="game-screen" class="screen">
+  <div id="game-header">
+    <button onclick="returnToDungeon()" style="background: #311; border-color: #611; color: #e88;">Leave</button>
+    <div style="flex-grow:1; text-align:center;"><span id="target-word-display"></span></div>
+    <div style="display:flex; gap: 10px;">
+      <button onclick="forceSkipAndLog()" style="background: #113; border-color: #226; color: #88e;">🆘</button>
+      <button onclick="speakWord(currentWord)" style="font-size: 1.5rem; padding: 10px 20px;">🔊</button>
+    </div>
+  </div>
+  
+  <div id="status-bar">
+    <div>Potions: <span id="word-progress">0</span> / 5</div>
+    <div id="streak-display-container">Streak: <span id="streak-display">0</span></div>
+  </div>
+  
+  <div id="game-area"></div>
+</div>
+
+<div id="help-level-screen" class="screen">
+  <div id="game-header">
+    <button onclick="returnToDungeon()" style="background: #311; border-color: #611; color: #e88;">Leave</button>
+    <div style="flex-grow:1; text-align:center;"><span id="help-word-display"></span></div>
+    <button onclick="speakWord(currentWord)" style="font-size: 1.5rem; padding: 10px 20px;">🔊</button>
+  </div>
+  <p>Look, Listen, and Build the word.</p>
+  <div id="help-status"></div>
+  <div id="help-builder-area"></div>
+</div>
+
+<div id="parent-screen" class="screen">
+  <h1>Professor's Log</h1>
+  <div style="background: rgba(0,0,0,0.8); padding: 20px; border-radius: 10px; border: 1px solid #d4af37; width: 80%; max-width: 500px; max-height: 40vh; overflow-y: auto; font-family: sans-serif;" id="struggle-list-container"></div>
+  <div style="margin-top: 20px; display: flex; gap: 15px;">
+    <button onclick="returnToDungeon()">Back</button>
+    <button onclick="resetAppProgress()" style="background: #311; border-color: #611; color: #e88;">Erase Progress</button>
+  </div>
+</div>
+
+<script>
+  // Global error catcher to display crashes on screen
+  window.onerror = function(msg, url, lineNo, columnNo, error) {
+    document.getElementById('error-log').innerText = 'System Error: ' + msg;
+    return false;
+  };
+
+  // Safe pre-loaded arrays (No copy/paste needed)
+  const listHFW_Y1_Y2 = ["across","after","again","air","along","animals","today","said","says","were","where","love","come","some","once","friend","school","house","door","floor","poor","because","find","kind","mind","behind","child","children","wild","climb","old","cold","gold","hold","told","every","great","break","steak","pretty","beautiful","fast","last","past","father","class","grass","pass","plant","path","bath","hour","move","prove","improve","sure","sugar","could","should","would","whole","any","many","clothes","busy","people","water","money","parents"];
+  const listY3_Y4 = ["accident","actual","address","answer","appear","arrive","believe","bicycle","breath","breathe","build","busy","business","calendar","caught","centre","century","certain","circle","complete","consider","continue","decide","describe","different","difficult","disappear","early","earth","eight","eighth","enough","exercise","experience","experiment","extreme","famous","favourite","forward","fruit","grammar","group","guard","guide","heard","heart","height","history","imagine","increase","important","interest","island","knowledge","learn","length","library","material","medicine","mention","minute","natural","naughty"];
+
+  // Bulletproof Save Data Loading
+  let progress = { newts: 0, struggles: {}, helpLog: [] };
+  try {
+    const savedData = localStorage.getItem('edwardSpellingProgress');
+    if (savedData) {
+      progress = JSON.parse(savedData);
+    }
+  } catch (e) {
+    console.error("Save data corrupted. Resetting.");
+    localStorage.removeItem('edwardSpellingProgress');
+  }
+  if (!progress.helpLog) progress.helpLog = [];
+  if (!progress.struggles) progress.struggles = {};
+  if (!progress.newts) progress.newts = 0;
+  
+  let currentWordList = [], currentWord = "", currentLetterIndex = 0;
+  let wordsCompletedInSession = 0, gameInterval, animationFrameReq, activeLetters = [];
+  let currentStreak = 0, mistakesOnCurrentWord = 0;
+  
+  const screens = { gate: document.getElementById('gate-screen'), dungeon: document.getElementById('dungeon-screen'), game: document.getElementById('game-screen'), parent: document.getElementById('parent-screen'), helpLevel: document.getElementById('help-level-screen') };
+  const targetDisplay = document.getElementById('target-word-display');
+  const gameArea = document.getElementById('game-area');
+  const streakDisplay = document.getElementById('streak-display');
+  const modalOverlay = document.getElementById('modal-overlay');
+  
+  const synth = window.speechSynthesis;
+  function unlockAudio() { 
+    try { synth.speak(new SpeechSynthesisUtterance('')); } catch(e) {}
+  }
+  
+  function speakWord(word) {
+    try {
+      const u = new SpeechSynthesisUtterance(word);
+      u.lang = 'en-GB'; 
+      synth.speak(u);
+    } catch(e) { console.error("Audio error", e); }
+  }
+  
+  function updateDungeonUI() {
+    document.getElementById('newt-count').innerText = progress.newts;
+    const btnLevel2 = document.getElementById('btn-level-2');
+    if (progress.newts >= 3) {
+      btnLevel2.disabled = false; btnLevel2.innerText = "Brew";
+      document.getElementById('felix-req').innerText = "Unlocked!";
+    } else {
+      btnLevel2.disabled = true; btnLevel2.innerText = "Locked";
+    }
+    const uniqueHelpWords = [...new Set(progress.helpLog)];
+    document.getElementById('help-count').innerText = `${uniqueHelpWords.length} words to practice`;
+    document.getElementById('btn-help-level').disabled = uniqueHelpWords.length === 0;
+  }
+  
+  function saveProgress() { 
+    try {
+      localStorage.setItem('edwardSpellingProgress', JSON.stringify(progress)); 
+    } catch(e) {}
+    updateDungeonUI(); 
+  }
+
+  // Gate Logic (Including fallbacks)
+  let gateTapCount = 0, gateTapTimer;
+  document.getElementById('gate-title').addEventListener('click', () => {
+    gateTapCount++; clearTimeout(gateTapTimer);
+    if (gateTapCount >= 3) { gateTapCount = 0; unlockAudio(); setTimeout(() => showScreen('dungeon'), 200); } 
+    else { gateTapTimer = setTimeout(() => gateTapCount = 0, 1000); }
+  });
+  
+  document.getElementById('skip-btn').addEventListener('click', () => {
+    unlockAudio(); showScreen('dungeon');
+  });
+
+  let parentTapCount = 0, parentTapTimer;
+  document.getElementById('dungeon-title').addEventListener('click', () => {
+    parentTapCount++; clearTimeout(parentTapTimer);
+    if (parentTapCount >= 5) { parentTapCount = 0; openParentDashboard(); } 
+    else { parentTapTimer = setTimeout(() => parentTapCount = 0, 1000); }
+  });
+
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const wandBtn = document.getElementById('wand-btn');
+  if (SpeechRecognition) {
+    const recognition = new SpeechRecognition(); recognition.lang = 'en-GB';
+    wandBtn.addEventListener('click', () => { 
+      try {
+        unlockAudio(); recognition.start(); document.getElementById('status').innerText = "Listening..."; 
+      } catch(e) { document.getElementById('status').innerText = "Mic blocked. Use Skip button."; }
+    });
+    recognition.onresult = (e) => {
+      const speech = e.results[0][0].transcript.toLowerCase();
+      if (speech.includes("no good") || speech.includes("swear")) { setTimeout(() => showScreen('dungeon'), 500); } 
+      else { document.getElementById('status').innerText = "Incorrect."; }
+    };
+  } else { 
+    wandBtn.style.display = 'none';
+    document.getElementById('status').innerText = "Voice API not supported here.";
+  }
+
+  function showScreen(screenName) { 
+    Object.values(screens).forEach(s => s.style.display = 'none'); 
+    screens[screenName].style.display = 'flex'; 
+    if (screenName === 'dungeon') updateDungeonUI(); 
+  }
+  
+  function returnToDungeon() { clearInterval(gameInterval); cancelAnimationFrame(animationFrameReq); showScreen('dungeon'); }
+
+  function forceSkipAndLog() {
+    pauseGame(); document.getElementById('modal-word').innerText = currentWord; modalOverlay.style.display = 'flex';
+  }
+  function skipAndLog() {
+    if (!progress.helpLog.includes(currentWord)) progress.helpLog.push(currentWord);
+    saveProgress(); modalOverlay.style.display = 'none'; loadNextWord();
+  }
+  function resumeWithTryAgain() { modalOverlay.style.display = 'none'; mistakesOnCurrentWord = 0; resumeGame(); }
+  function pauseGame() { clearInterval(gameInterval); cancelAnimationFrame(animationFrameReq); }
+  function resumeGame() { gameInterval = setInterval(spawnLetter, 1000); animationFrameReq = requestAnimationFrame(gameLoop); }
+
+  function startLevel(level) {
+    currentWordList = level === 1 ? listHFW_Y1_Y2 : listY3_Y4;
+    wordsCompletedInSession = 0; currentStreak = 0;
+    document.getElementById('word-progress').innerText = wordsCompletedInSession;
+    streakDisplay.innerText = currentStreak;
+    streakDisplay.className = '';
+    showScreen('game'); loadNextWord();
+  }
+
+  function loadNextWord() {
+    gameArea.innerHTML = ''; activeLetters = []; currentLetterIndex = 0; mistakesOnCurrentWord = 0;
+    currentWord = currentWordList[Math.floor(Math.random() * currentWordList.length)].toUpperCase();
+    updateDisplay(); setTimeout(() => speakWord(currentWord), 500);
+    clearInterval(gameInterval); gameInterval = setInterval(spawnLetter, 1000); 
+    animationFrameReq = requestAnimationFrame(gameLoop);
+  }
+
+  function updateDisplay() {
+    let displayHtml = '';
+    for (let i = 0; i < currentWord.length; i++) { displayHtml += i < currentLetterIndex ? currentWord[i] : '_'; }
+    targetDisplay.innerHTML = displayHtml;
+  }
+
+  function spawnLetter() {
+    const el = document.createElement('div'); el.className = 'falling-letter';
+    const nextCorrectLetter = currentWord[currentLetterIndex];
+    const isCorrect = Math.random() > 0.4;
+    el.innerText = isCorrect ? nextCorrectLetter : String.fromCharCode(65 + Math.floor(Math.random() * 26));
+    
+    const maxLeft = window.innerWidth - 80;
+    el.style.left = Math.max(10, Math.random() * maxLeft) + 'px';
+    let y = -70; el.style.top = y + 'px';
+    
+    gameArea.appendChild(el);
+    const letterObj = { el, y, char: el.innerText, active: true }; activeLetters.push(letterObj);
+    el.addEventListener('touchstart', (e) => handleLetterTap(e, letterObj));
+    el.addEventListener('mousedown', (e) => handleLetterTap(e, letterObj));
+  }
+
+  function handleLetterTap(e, letterObj) {
+    e.preventDefault(); if (!letterObj.active) return; 
+
+    if (letterObj.char === currentWord[currentLetterIndex]) {
+      letterObj.active = false; currentStreak++;
+      letterObj.el.classList.add('hit-effect');
+      
+      streakDisplay.innerText = currentStreak;
+      if (currentStreak > 2) streakDisplay.className = 'highlight-text';
+      
+      setTimeout(() => letterObj.el.remove(), 200);
+      activeLetters = activeLetters.filter(l => l !== letterObj);
+      
+      currentLetterIndex++; updateDisplay();
+      
+      if (currentLetterIndex >= currentWord.length) {
+        pauseGame(); wordsCompletedInSession++;
+        document.getElementById('word-progress').innerText = wordsCompletedInSession;
+        if (wordsCompletedInSession >= 5) {
+          setTimeout(() => { alert("Potion Brewed! +1 Newt Eye."); progress.newts++; saveProgress(); returnToDungeon(); }, 500);
+        } else { setTimeout(loadNextWord, 1000); }
+      }
+    } else {
+      currentStreak = 0; streakDisplay.innerText = 0; streakDisplay.className = '';
+      mistakesOnCurrentWord++;
+      letterObj.el.classList.add('miss-effect');
+      setTimeout(() => letterObj.el.classList.remove('miss-effect'), 300);
+      
+      if (mistakesOnCurrentWord >= 3) forceSkipAndLog();
+    }
+  }
+
+  function gameLoop() {
+    activeLetters.forEach(obj => {
+      if (!obj.active) return; obj.y += 2.5; obj.el.style.top = obj.y + 'px';
+      if (obj.y > gameArea.clientHeight) { obj.el.remove(); activeLetters = activeLetters.filter(l => l !== obj); }
+    });
+    if (currentLetterIndex < currentWord.length) { animationFrameReq = requestAnimationFrame(gameLoop); }
+  }
+
+  let helpTimer;
+  function startHelpLevel() {
+    currentWordList = [...new Set(progress.helpLog)];
+    if (currentWordList.length === 0) { alert("Help log is empty!"); return; }
+    showScreen('helpLevel'); loadNextHelpWord();
+  }
+
+  function loadNextHelpWord() {
+    if (currentWordList.length === 0) { alert("Practice complete!"); returnToDungeon(); return; }
+    currentWord = currentWordList.shift().toUpperCase();
+    currentLetterIndex = 0;
+    
+    const display = document.getElementById('help-word-display');
+    const builder = document.getElementById('help-builder-area');
+    const status = document.getElementById('help-status');
+    
+    builder.innerHTML = ''; 
+    display.innerText = currentWord; 
+    speakWord(currentWord); 
+    
+    let countdown = 3;
+    status.innerText = `Memorise the word... ${countdown}`;
+    
+    clearInterval(helpTimer);
+    helpTimer = setInterval(() => {
+      countdown--;
+      if (countdown > 0) {
+        status.innerText = `Memorise the word... ${countdown}`;
+      } else {
+        clearInterval(helpTimer);
+        status.innerText = "Now spell it!";
+        display.innerText = '_'.repeat(currentWord.length);
+        let letters = currentWord.split('').sort(() => Math.random() - 0.5);
+        letters.forEach(char => {
+          const btn = document.createElement('div'); btn.className = 'static-letter'; btn.innerText = char;
+          btn.onclick = () => handleHelpLetterTap(btn, char);
+          builder.appendChild(btn);
+        });
+      }
+    }, 1000);
+  }
+
+  function handleHelpLetterTap(btn, char) {
+    if (char === currentWord[currentLetterIndex]) {
+      btn.style.visibility = 'hidden'; 
+      currentLetterIndex++;
+      
+      let displayHtml = '';
+      for (let i = 0; i < currentWord.length; i++) { displayHtml += i < currentLetterIndex ? currentWord[i] : '_'; }
+      document.getElementById('help-word-display').innerText = displayHtml;
+      
+      if (currentLetterIndex >= currentWord.length) {
+        progress.helpLog = progress.helpLog.filter(w => w.toUpperCase() !== currentWord);
+        saveProgress();
+        document.getElementById('help-status').innerText = "Perfect!";
+        setTimeout(loadNextHelpWord, 1500);
+      }
+    } else {
+      btn.style.background = '#a00';
+      setTimeout(() => btn.style.background = '#222', 300);
+    }
+  }
+
+  function openParentDashboard() {
+    const list = document.getElementById('struggle-list-container'); list.innerHTML = '';
+    const words = [...new Set(progress.helpLog)];
+    if (words.length === 0) { list.innerHTML = '<p style="color:#aaa;">No words currently need practice.</p>'; } 
+    else { words.forEach(w => { list.innerHTML += `<div style="border-bottom: 1px solid #333; padding: 10px 0; color: #ccc;">${w}</div>`; }); }
+    showScreen('parent');
+  }
+  
+  function resetAppProgress() {
+    if (confirm("Erase all data?")) { 
+      progress = { newts: 0, struggles: {}, helpLog: [] }; 
+      saveProgress(); 
+      openParentDashboard(); 
+    }
+  }
+</script>
+</body>
+</html>
