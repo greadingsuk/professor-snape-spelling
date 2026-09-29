@@ -5,48 +5,94 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <title>Snape's Spelling</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
 <style>
   body {
-    background-color: #1a1a1a; color: #d4af37; font-family: 'Trebuchet MS', sans-serif;
+    background: radial-gradient(circle at center, #2a2a2a 0%, #050505 100%);
+    color: #d4af37; 
+    font-family: 'Cinzel', serif;
     margin: 0; padding: 0; overflow: hidden; touch-action: none;
+    height: 100vh;
   }
   .screen {
     display: none; flex-direction: column; align-items: center; 
     justify-content: center; height: 100vh; width: 100vw;
   }
   #gate-screen { display: flex; }
-  #game-screen { background: #0a0a0a; position: relative; justify-content: flex-start; padding-top: 20px;}
+  #gate-title { padding: 20px; border-radius: 10px; transition: background 0.2s; }
+  #gate-title:active { background: rgba(255,255,255,0.1); }
   
-  h1 { font-size: 2rem; margin-bottom: 10px; text-shadow: 2px 2px 4px #000; text-align: center; }
-  p { color: #ccc; }
+  #game-screen { position: relative; justify-content: flex-start; padding-top: 20px;}
+  
+  h1 { font-size: 2.5rem; margin-bottom: 10px; text-shadow: 0 0 15px rgba(212, 175, 55, 0.5); text-align: center; }
+  p { color: #ccc; font-family: sans-serif; }
   
   button {
-    background: #d4af37; color: #1a1a1a; border: 2px solid #a67c00;
-    padding: 15px 30px; font-size: 1.2rem; border-radius: 10px; font-weight: bold; cursor: pointer;
+    background: linear-gradient(145deg, #d4af37, #aa8822);
+    color: #111; border: 2px solid #fff;
+    padding: 15px 30px; font-size: 1.2rem; border-radius: 8px; 
+    font-weight: bold; cursor: pointer; font-family: 'Cinzel', serif;
+    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
   }
-  button:active { transform: scale(0.95); }
-  button:disabled { background: #555; color: #222; border-color: #333; cursor: not-allowed; }
+  button:active { transform: scale(0.95); box-shadow: 0 2px 5px rgba(212, 175, 55, 0.3); }
+  button:disabled { background: #444; color: #222; border-color: #333; cursor: not-allowed; box-shadow: none; }
   
-  #status { margin-top: 20px; font-style: italic; color: #888; }
+  #status { margin-top: 20px; font-style: italic; color: #888; font-family: sans-serif; }
   
   /* Dungeon UI */
-  .inventory { font-size: 1.2rem; background: #333; padding: 10px 20px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #d4af37; }
-  .potion-grid { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; max-width: 800px; }
-  .potion-card { background: #2a2a2a; border: 2px solid #d4af37; padding: 20px; border-radius: 10px; text-align: center; width: 200px; }
-  .potion-card h2 { margin: 0 0 10px 0; font-size: 1.2rem; }
+  .inventory { font-size: 1.2rem; background: rgba(0,0,0,0.6); padding: 10px 20px; border-radius: 8px; margin-bottom: 30px; border: 1px solid #d4af37; box-shadow: 0 0 10px rgba(212, 175, 55, 0.2); }
+  .potion-grid { display: flex; gap: 25px; flex-wrap: wrap; justify-content: center; max-width: 800px; }
+  .potion-card { 
+    background: linear-gradient(180deg, #1a1a1a 0%, #0a0a0a 100%);
+    border: 2px solid #d4af37; padding: 25px; border-radius: 12px; 
+    text-align: center; width: 200px; position: relative;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+  }
+  .potion-card h2 { margin: 0 0 10px 0; font-size: 1.4rem; }
   
   /* Game UI */
-  #game-header { display: flex; justify-content: space-between; width: 90%; margin-bottom: 20px; align-items: center; }
-  #target-word-display { font-size: 2.5rem; letter-spacing: 10px; min-height: 50px; }
-  #play-audio-btn { padding: 10px; background: #444; color: white; border: none; font-size: 1rem; }
-  #exit-btn { padding: 10px; background: #800; color: white; border: none; font-size: 1rem; }
-  #game-area { flex-grow: 1; width: 100%; position: relative; overflow: hidden; border-top: 2px solid #333; }
+  #game-header { display: flex; justify-content: space-between; width: 90%; margin-bottom: 10px; align-items: center; }
+  #target-word-display { font-size: 3rem; letter-spacing: 12px; min-height: 50px; text-shadow: 0 0 10px #d4af37; }
+  #play-audio-btn { padding: 10px; font-size: 1rem; }
+  #exit-btn { padding: 10px; background: #600; color: #fff; border-color: #a00; }
+  #game-area { flex-grow: 1; width: 100%; position: relative; overflow: hidden; border-top: 1px solid #333; background: rgba(0,0,0,0.4); }
   
+  /* Guitar Hero Mechanics */
   .falling-letter {
-    position: absolute; width: 50px; height: 50px;
-    background: #2a2a2a; color: #d4af37; font-size: 1.5rem; font-weight: bold;
+    position: absolute; width: 60px; height: 60px;
+    background: linear-gradient(145deg, #2a2a2a, #111); color: #d4af37; 
+    font-size: 2rem; font-weight: bold; font-family: sans-serif;
     display: flex; justify-content: center; align-items: center;
-    border: 2px solid #d4af37; border-radius: 5px; box-shadow: 0 0 10px rgba(212, 175, 55, 0.2);
+    border: 2px solid #d4af37; border-radius: 8px; 
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+  }
+
+  /* Animations */
+  .hit-effect { animation: shatter 0.3s forwards; pointer-events: none; }
+  @keyframes shatter {
+    0% { transform: scale(1); opacity: 1; box-shadow: 0 0 20px #0f0; border-color: #0f0; color: #0f0; }
+    100% { transform: scale(2.5); opacity: 0; box-shadow: 0 0 50px #0f0; }
+  }
+
+  .miss-effect { animation: shake 0.3s; background: #800 !important; border-color: #f00; }
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-10px) rotate(-5deg); }
+    75% { transform: translateX(10px) rotate(5deg); }
+  }
+
+  /* Streak Display */
+  #streak-display {
+    position: absolute; top: 20%; left: 50%; transform: translate(-50%, 0);
+    font-size: 3rem; color: #0ff; text-shadow: 0 0 20px #00f;
+    opacity: 0; pointer-events: none; z-index: 10; font-style: italic;
+  }
+  .show-streak { animation: floatUp 1s forwards; }
+  @keyframes floatUp {
+    0% { opacity: 0; transform: translate(-50%, 20px) scale(0.8); }
+    20% { opacity: 1; transform: translate(-50%, 0) scale(1.2); }
+    80% { opacity: 1; transform: translate(-50%, 0) scale(1); }
+    100% { opacity: 0; transform: translate(-50%, -30px); }
   }
 </style>
 </head>
@@ -54,7 +100,9 @@
 
 <!-- GATE SCREEN -->
 <div id="gate-screen" class="screen">
-  <h1>The Marauder's Gate</h1>
+  <div id="gate-title">
+    <h1>The Marauder's Gate</h1>
+  </div>
   <p>State the password to enter.</p>
   <button id="wand-btn">🪄 Tap to Speak</button>
   <div id="status">Waiting...</div>
@@ -88,66 +136,61 @@
     <div id="target-word-display"></div>
     <button id="play-audio-btn">🔊 Hear Word</button>
   </div>
-  <p style="margin:0;">Progress: <span id="word-progress">0</span> / 5 words</p>
+  <p style="margin:0; font-family: 'Cinzel', serif;">Potions Brewed: <span id="word-progress">0</span> / 5</p>
+  <div id="streak-display"></div>
   <div id="game-area"></div>
 </div>
 
 <script>
-  // Curriculum Dictionaries
   const wordsLevel1 = ["fun", "beautiful", "children", "clothes", "sugar", "whole", "water", "again"];
   const wordsLevel2 = ["accident", "bicycle", "knowledge", "medicine", "exercise", "special", "weight"];
   
-  // State
   let progress = JSON.parse(localStorage.getItem('edwardSpellingProgress')) || { newts: 0 };
-  let currentWordList = [];
-  let currentWord = "";
-  let currentLetterIndex = 0;
-  let wordsCompletedInSession = 0;
-  let gameInterval;
-  let animationFrameReq;
-  let activeLetters = [];
+  let currentWordList = [], currentWord = "", currentLetterIndex = 0;
+  let wordsCompletedInSession = 0, gameInterval, animationFrameReq, activeLetters = [];
+  let currentStreak = 0;
   
-  // DOM Elements
-  const screens = {
-    gate: document.getElementById('gate-screen'),
-    dungeon: document.getElementById('dungeon-screen'),
-    game: document.getElementById('game-screen')
-  };
+  const screens = { gate: document.getElementById('gate-screen'), dungeon: document.getElementById('dungeon-screen'), game: document.getElementById('game-screen') };
   const targetDisplay = document.getElementById('target-word-display');
   const gameArea = document.getElementById('game-area');
   const playAudioBtn = document.getElementById('play-audio-btn');
   const newtCountDisplay = document.getElementById('newt-count');
   const btnLevel2 = document.getElementById('btn-level-2');
-  
-  // Speech Synthesis
+  const streakDisplay = document.getElementById('streak-display');
   const synth = window.speechSynthesis;
-  function unlockAudio() {
-    const utterance = new SpeechSynthesisUtterance('');
-    synth.speak(utterance);
-  }
+  
+  function unlockAudio() { synth.speak(new SpeechSynthesisUtterance('')); }
   function speakWord(word) {
     const utterance = new SpeechSynthesisUtterance(word);
-    utterance.lang = 'en-GB';
-    utterance.rate = 0.8;
-    synth.speak(utterance);
+    utterance.lang = 'en-GB'; utterance.rate = 0.8; synth.speak(utterance);
   }
   
-  // Update Dungeon UI
   function updateDungeonUI() {
     newtCountDisplay.innerText = progress.newts;
     if (progress.newts >= 5) {
-      btnLevel2.disabled = false;
-      btnLevel2.innerText = "Brew";
+      btnLevel2.disabled = false; btnLevel2.innerText = "Brew";
       document.getElementById('felix-req').innerText = "Unlocked!";
     }
   }
-  
-  function saveProgress() {
-    localStorage.setItem('edwardSpellingProgress', JSON.stringify(progress));
-    updateDungeonUI();
-  }
+  function saveProgress() { localStorage.setItem('edwardSpellingProgress', JSON.stringify(progress)); updateDungeonUI(); }
 
-  // Phase 1: Voice Recognition
+  // SECRET BYPASS LOGIC
+  let tapCount = 0;
+  let tapTimer;
+  document.getElementById('gate-title').addEventListener('click', () => {
+    tapCount++;
+    clearTimeout(tapTimer);
+    if (tapCount >= 3) {
+      tapCount = 0;
+      unlockAudio();
+      document.getElementById('status').innerText = "Secret passage opened...";
+      setTimeout(() => showScreen('dungeon'), 500);
+    } else {
+      tapTimer = setTimeout(() => tapCount = 0, 1000); // Reset if taps are too slow
+    }
+  });
+
+  // NORMAL VOICE LOGIC
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   const wandBtn = document.getElementById('wand-btn');
   const statusText = document.getElementById('status');
@@ -155,139 +198,115 @@
   if (SpeechRecognition) {
     const recognition = new SpeechRecognition();
     recognition.lang = 'en-GB';
-    wandBtn.addEventListener('click', () => {
-      unlockAudio(); 
-      recognition.start();
-      statusText.innerHTML = "Listening...";
-    });
+    wandBtn.addEventListener('click', () => { unlockAudio(); recognition.start(); statusText.innerHTML = "Listening..."; });
     recognition.onresult = (event) => {
       const speech = event.results[0][0].transcript.toLowerCase();
       if (speech.includes("no good") || speech.includes("swear")) {
-        statusText.innerHTML = "Mischief Managed.";
-        setTimeout(() => showScreen('dungeon'), 1000);
-      } else {
-        statusText.innerHTML = "Incorrect. Try again.";
-      }
+        statusText.innerHTML = "Mischief Managed."; setTimeout(() => showScreen('dungeon'), 1000);
+      } else { statusText.innerHTML = "Incorrect. Try again."; }
     };
   } else {
     wandBtn.addEventListener('click', () => { unlockAudio(); showScreen('dungeon'); });
     wandBtn.innerHTML = "Skip (Voice not supported)";
   }
 
-  // Navigation
-  function showScreen(screenName) {
-    Object.values(screens).forEach(s => s.style.display = 'none');
-    screens[screenName].style.display = 'flex';
-    if (screenName === 'dungeon') updateDungeonUI();
-  }
+  function showScreen(screenName) { Object.values(screens).forEach(s => s.style.display = 'none'); screens[screenName].style.display = 'flex'; if (screenName === 'dungeon') updateDungeonUI(); }
+  function returnToDungeon() { clearInterval(gameInterval); cancelAnimationFrame(animationFrameReq); showScreen('dungeon'); }
 
-  function returnToDungeon() {
-    clearInterval(gameInterval);
-    cancelAnimationFrame(animationFrameReq);
-    showScreen('dungeon');
-  }
-
-  // Game Logic
   function startLevel(level) {
     currentWordList = level === 1 ? wordsLevel1 : wordsLevel2;
-    wordsCompletedInSession = 0;
+    wordsCompletedInSession = 0; currentStreak = 0;
     document.getElementById('word-progress').innerText = wordsCompletedInSession;
-    showScreen('game');
-    loadNextWord();
+    showScreen('game'); loadNextWord();
   }
 
   function loadNextWord() {
-    gameArea.innerHTML = '';
-    activeLetters = [];
-    currentLetterIndex = 0;
-    
+    gameArea.innerHTML = ''; activeLetters = []; currentLetterIndex = 0;
     currentWord = currentWordList[Math.floor(Math.random() * currentWordList.length)].toUpperCase();
     updateDisplay();
-    
     setTimeout(() => speakWord(currentWord), 500);
-    
     clearInterval(gameInterval);
-    gameInterval = setInterval(spawnLetter, 1200);
+    gameInterval = setInterval(spawnLetter, 1000); // Spawns slightly faster now
     animationFrameReq = requestAnimationFrame(gameLoop);
   }
 
   function updateDisplay() {
     let displayHtml = '';
-    for (let i = 0; i < currentWord.length; i++) {
-      displayHtml += i < currentLetterIndex ? currentWord[i] : '_';
-    }
+    for (let i = 0; i < currentWord.length; i++) { displayHtml += i < currentLetterIndex ? currentWord[i] : '_'; }
     targetDisplay.innerHTML = displayHtml;
   }
 
   playAudioBtn.addEventListener('click', () => speakWord(currentWord));
 
   function spawnLetter() {
-    const el = document.createElement('div');
-    el.className = 'falling-letter';
-    
+    const el = document.createElement('div'); el.className = 'falling-letter';
     const nextCorrectLetter = currentWord[currentLetterIndex];
     const isCorrect = Math.random() > 0.4;
-    const randomChar = String.fromCharCode(65 + Math.floor(Math.random() * 26));
-    
-    el.innerText = isCorrect ? nextCorrectLetter : randomChar;
-    el.style.left = Math.random() * (window.innerWidth - 60) + 'px';
-    
-    let y = -50;
-    el.style.top = y + 'px';
+    el.innerText = isCorrect ? nextCorrectLetter : String.fromCharCode(65 + Math.floor(Math.random() * 26));
+    el.style.left = Math.random() * (window.innerWidth - 80) + 'px';
+    let y = -60; el.style.top = y + 'px';
     gameArea.appendChild(el);
-    
-    const letterObj = { el, y, char: el.innerText };
+    const letterObj = { el, y, char: el.innerText, active: true };
     activeLetters.push(letterObj);
-
     el.addEventListener('touchstart', (e) => handleLetterTap(e, letterObj));
     el.addEventListener('mousedown', (e) => handleLetterTap(e, letterObj));
   }
 
+  function triggerStreak() {
+    streakDisplay.innerText = `${currentStreak}x COMBO!`;
+    streakDisplay.classList.remove('show-streak');
+    void streakDisplay.offsetWidth; // Trigger reflow to restart animation
+    streakDisplay.classList.add('show-streak');
+  }
+
   function handleLetterTap(e, letterObj) {
     e.preventDefault();
+    if (!letterObj.active) return; // Prevent double tapping
+
     if (letterObj.char === currentWord[currentLetterIndex]) {
-      letterObj.el.style.background = 'green';
-      setTimeout(() => letterObj.el.remove(), 100);
+      // Correct Hit - Guitar Hero Shatter
+      letterObj.active = false;
+      currentStreak++;
+      letterObj.el.classList.add('hit-effect');
+      
+      if (currentStreak > 1) triggerStreak();
+
+      setTimeout(() => letterObj.el.remove(), 300);
       activeLetters = activeLetters.filter(l => l !== letterObj);
       
       currentLetterIndex++;
       updateDisplay();
       
       if (currentLetterIndex >= currentWord.length) {
-        clearInterval(gameInterval);
-        cancelAnimationFrame(animationFrameReq);
+        clearInterval(gameInterval); cancelAnimationFrame(animationFrameReq);
         wordsCompletedInSession++;
         document.getElementById('word-progress').innerText = wordsCompletedInSession;
         
         if (wordsCompletedInSession >= 5) {
           setTimeout(() => {
-            alert("Potion Complete! You earned 1 Newt Eye.");
-            progress.newts++;
-            saveProgress();
-            returnToDungeon();
-          }, 500);
-        } else {
-          setTimeout(loadNextWord, 1000);
-        }
+            alert("Potion Brewed! You earned 1 Newt Eye.");
+            progress.newts++; saveProgress(); returnToDungeon();
+          }, 600);
+        } else { setTimeout(loadNextWord, 1000); }
       }
     } else {
-      letterObj.el.style.background = '#aa0000'; // Red flash for wrong letter
+      // Wrong Hit
+      currentStreak = 0;
+      letterObj.el.classList.add('miss-effect');
+      setTimeout(() => letterObj.el.classList.remove('miss-effect'), 300);
     }
   }
 
   function gameLoop() {
     activeLetters.forEach(obj => {
-      obj.y += 2; // Adjust falling speed here
+      if (!obj.active) return;
+      obj.y += 2.5; // Fall speed
       obj.el.style.top = obj.y + 'px';
-      
       if (obj.y > gameArea.clientHeight) {
-        obj.el.remove();
-        activeLetters = activeLetters.filter(l => l !== obj);
+        obj.el.remove(); activeLetters = activeLetters.filter(l => l !== obj);
       }
     });
-    if (currentLetterIndex < currentWord.length) {
-      animationFrameReq = requestAnimationFrame(gameLoop);
-    }
+    if (currentLetterIndex < currentWord.length) { animationFrameReq = requestAnimationFrame(gameLoop); }
   }
 </script>
 </body>
